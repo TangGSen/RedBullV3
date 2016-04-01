@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="tabButtonItemName">
+        <item>学习</item>
+        <item>考试</item>
+        <item>资源库</item>
+    </string-array>
+
+    <string-array name="resource_arrays">
+        <item> 核心课程 </item>
+        <item> 管理课程</item>
+        <item> 单位课程 </item>
+        <item> 专业课程</item>
+    </string-array>
+
+    <integer-array name="my_material_colors">
+        <item>@color/theme_color</item>
+    </integer-array>
+</resources>

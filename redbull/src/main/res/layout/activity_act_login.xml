@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.sen.redbull.activity.ActLogin">
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:background="@color/divider">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="登录"
+            android:textColor="@color/font_h1"
+            android:textSize="@dimen/tab_forn_size_18sp" />
+
+
+    </android.support.v7.widget.Toolbar>
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/login_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       android:layout_gravity="center_horizontal"
+        android:layout_marginTop="?actionBarSize"
+        android:src="@mipmap/icon" />
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/et_username"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/common_38dp"
+            android:layout_marginLeft="@dimen/common_38dp"
+            android:layout_marginRight="@dimen/common_38dp"
+            android:background="@drawable/bg_login_edit"
+            android:hint="用户名"
+            android:maxLines="1"
+            android:layout_marginTop="@dimen/common_16dp"
+            android:paddingLeft="@dimen/common_8dp"
+            android:textSize="@dimen/frist_forn_size_16sp" />
+
+
+
+
+    <android.support.v7.widget.AppCompatEditText
+        android:layout_marginTop="@dimen/common_8dp"
+        android:id="@+id/et_password"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_38dp"
+        android:layout_marginLeft="@dimen/common_38dp"
+        android:layout_marginRight="@dimen/common_38dp"
+        android:background="@drawable/bg_login_edit"
+        android:hint="密码"
+        android:inputType="textPassword"
+        android:maxLines="1"
+        android:paddingLeft="@dimen/common_8dp"
+        android:textSize="@dimen/frist_forn_size_16sp" />
+
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btn_login"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_48dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="@dimen/common_38dp"
+        android:layout_marginRight="@dimen/common_38dp"
+        android:layout_marginTop="@dimen/common_16dp"
+        android:background="@drawable/bg_login_btn"
+        android:maxLines="1"
+        android:paddingLeft="@dimen/common_8dp"
+        android:text="登录"
+        android:textColor="@color/tab_bgcolor"
+        android:textSize="@dimen/frist_forn_size_16sp" />
+
+
+</LinearLayout>
