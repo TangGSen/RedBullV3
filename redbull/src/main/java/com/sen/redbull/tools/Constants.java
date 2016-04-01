@@ -13,10 +13,12 @@ public class Constants {
 
     // 外网地址
 
-    public static final String PATH = "http://121.42.212.192/";
+//    public static final String PATH = "http://121.42.212.192/";
+    //ceshi
+    public static final String PATH = "http://192.168.191.1:8080/";
 
 //    1.app 更新
-public static final String APK_PATH = "http://121.42.212.192/www/view/front/20140504/dcAppAndroid.html";
+public static final String APK_PATH = PATH+"www/view/front/20140504/dcAppAndroid.html";
 
 
     // 1.登陆

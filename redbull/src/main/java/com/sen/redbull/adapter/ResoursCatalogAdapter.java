@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sen.redbull.R;
-import com.sen.redbull.mode.ResourseKindBean;
 
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class ResoursCatalogAdapter extends RecyclerView.Adapter<ResoursCatalogAd
 
     //Item click thing
     public interface OnItemClickListener {
-        void onItemClick(View view, int position, ResourseKindBean childItemBean);
+        void onItemClick(View view, int position, String childItemBean);
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -54,6 +53,16 @@ public class ResoursCatalogAdapter extends RecyclerView.Adapter<ResoursCatalogAd
         String itemBean = mData.get(position);
 
         holder.item_catalog_name.setText(itemBean);
+        if (onItemClickListener != null) {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    onItemClickListener.onItemClick(holder.itemView, position, mData.get(position));
+                }
+
+            });
+        }
 
 
 
