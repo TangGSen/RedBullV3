@@ -1,6 +1,6 @@
 [
     {
-        "outputFile": "E:\\AndroidWorkPlaces\\RedBullV2032\\refleshlibrary\\build\\intermediates\\res\\merged\\release\\values-port\\values-port.xml",
+        "outputFile": "E:\\AndroidWorkPlaces\\RedBullV301\\refleshlibrary\\build\\intermediates\\res\\merged\\release\\values-port\\values-port.xml",
         "map": [
             {
                 "to": {
@@ -11,7 +11,7 @@
                     "endOffset": 106
                 },
                 "from": {
-                    "file": "E:\\AndroidWorkPlaces\\RedBullV2032\\refleshlibrary\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.1.1\\res\\values-port\\values-port.xml",
+                    "file": "E:\\AndroidWorkPlaces\\RedBullV301\\refleshlibrary\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.1.1\\res\\values-port\\values-port.xml",
                     "position": {
                         "startLine": 4,
                         "startColumn": 4,

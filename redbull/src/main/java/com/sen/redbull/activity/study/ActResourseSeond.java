@@ -4,36 +4,32 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.widget.Toast;
+import android.view.View;
 
 import com.alibaba.fastjson.JSON;
-import com.cjj.MaterialRefreshLayout;
-import com.cjj.MaterialRefreshListener;
 import com.sen.redbull.R;
-import com.sen.redbull.adapter.CommentListAdapter;
+import com.sen.redbull.adapter.StudyRecyclerAdapter;
 import com.sen.redbull.base.BaseActivity;
 import com.sen.redbull.imgloader.AnimateFirstDisplayListener;
-import com.sen.redbull.mode.CommentHomeBean;
-import com.sen.redbull.mode.CommentItemBean;
-import com.sen.redbull.mode.EventComentCountForResouce;
-import com.sen.redbull.mode.EventComentCountForStudy;
-import com.sen.redbull.mode.EventSubmitComentSucess;
+import com.sen.redbull.mode.LessonItemBean;
+import com.sen.redbull.mode.MyLessonHomeBean;
+import com.sen.redbull.tools.AcountManager;
 import com.sen.redbull.tools.Constants;
 import com.sen.redbull.tools.DialogUtils;
 import com.sen.redbull.tools.NetUtil;
+import com.sen.redbull.tools.ToastUtils;
 import com.sen.redbull.widget.RecyleViewItemDecoration;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.Callback;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.Bind;
@@ -44,13 +40,7 @@ import okhttp3.Call;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class ActResourseSeond extends BaseActivity  {
-    //	protected static final int END_TO_WRITE_COMMENT = 0;
-
-    //	private ImageButton btn_back_comment;
-//	private ImageButton btn_write_comment;
-    private CommentHomeBean getLessonCommentListBean;
-
+public class ActResourseSeond extends BaseActivity {
     @Bind(R.id.listview_comment)
     RecyclerView xRecyclerView;
     @Bind(R.id.common_back)
@@ -58,75 +48,67 @@ public class ActResourseSeond extends BaseActivity  {
     @Bind(R.id.btn_write_common)
     AppCompatImageButton btn_write_common;
 
-    @Bind(R.id.comment_refresh_widget)
-    MaterialRefreshLayout swipe_refresh_widget;
+    @Bind(R.id.resourse_refresh_widget)
+    SwipeRefreshLayout swipe_refresh_widget;
 
+    private String classif;
 
-
-
-
-
-    private List<CommentItemBean> commonList;
-    private List<CommentItemBean> allCommonList;
-    private String courseId;
-    //这个评论页是从哪个act 来的，EventBus 分发不同
-    private String from;
-
-    private int maxPage = 0;
-    private int currentPage = 1;
 
     private static final int GETDATA_ERROR = 0;
-    private static final int SHOW_DATA = 1;
 
-    private CommentListAdapter adapter;
-    private int sumbmitCount = 0;
-    private  boolean isLoadReflesh = false;
-    private  boolean isLoadMore = false;
+    private StudyRecyclerAdapter adapter;
+    private boolean isLoadReflesh = false;
+    private LinearLayoutManager linearnLayoutManager;
 
 
+    private List<LessonItemBean> mLesssListData;
+    private List<LessonItemBean> allLesssListData;
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
+
             switch (msg.what) {
                 case 0:
-
-                    Toast.makeText(ActResourseSeond.this, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                    ToastUtils.showTextToast(ActResourseSeond.this, "网络异常，请刷新重试");
                     break;
+
                 case 1:
-                    CommentHomeBean homeBeam = (CommentHomeBean) msg.obj;
-                    maxPage = homeBeam.getMaxPage();
-                    commonList = homeBeam.getCommontsList();
 
-                    if (commonList == null) {
-                        Toast.makeText(ActResourseSeond.this, "当前没评论", Toast.LENGTH_SHORT).show();
+                    MyLessonHomeBean homeBeam = (MyLessonHomeBean) msg.obj;
+                    mLesssListData = homeBeam.getCourselist();
+                    // 当返回的数据为空的时候，那么就要显示这个
+                    if (mLesssListData == null) {
+                        ToastUtils.showTextToast(ActResourseSeond.this, "没有数据");
+                        return false;
                     }
-                    if (commonList.size() == 0) {
-                        Toast.makeText(ActResourseSeond.this, "当前没评论", Toast.LENGTH_SHORT).show();
-                    }
-
-                    allCommonList.addAll(commonList);
-                    Collections.sort(allCommonList);
-                    commonList.clear();
-                    //创建并设置Adapter
-                    if (adapter == null) {
-
-                        Log.e("sen", "刷新222444");
-                    } else {
-                        Log.e("sen", "刷新222");
-                        adapter.notifyDataSetChanged();
+                    if (mLesssListData.size() == 0) {
+                        ToastUtils.showTextToast(ActResourseSeond.this, "没有数据");
                     }
 
-
+                    allLesssListData.clear();
+                    allLesssListData.addAll(mLesssListData);
+                    mLesssListData.clear();
+                    showRecyclerviewItemData(allLesssListData);
                     break;
-
 
             }
             DialogUtils.closeDialog();
             return false;
         }
     });
-    private LinearLayoutManager linearnLayoutManager;
 
+
+    private void showRecyclerviewItemData(List<LessonItemBean> LesssListData) {
+        if (adapter == null) {
+            //创建并设置Adapter
+            adapter = new StudyRecyclerAdapter(ActResourseSeond.this, allLesssListData);
+            xRecyclerView.setAdapter(adapter);
+            setOnItemClick();
+        } else {
+            adapter.notifyDataSetChanged();
+        }
+
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -134,24 +116,13 @@ public class ActResourseSeond extends BaseActivity  {
         EventBus.getDefault().register(this);
     }
 
-    public void onEvent(EventSubmitComentSucess event) { //接收方法  在发关事件的线程接收
-        sumbmitCount++;
-        if (allCommonList != null) {
-            allCommonList.clear();
-        } else {
-            allCommonList = new ArrayList<>();
-
-        }
-        getCommntList(1);
-    }
-
 
     @Override
     protected void init() {
         super.init();
         Intent intent = getIntent();
-        courseId = intent.getStringExtra("leid");
-        from = intent.getStringExtra("from");
+        classif = intent.getStringExtra("calssif");
+
 
     }
 
@@ -159,14 +130,14 @@ public class ActResourseSeond extends BaseActivity  {
     @Override
     protected void initView(Bundle savedInstanceState) {
         super.initView(savedInstanceState);
-        setContentView(R.layout.activity_comment_list);
+        setContentView(R.layout.activity_secondresourse_list);
         ButterKnife.bind(this);
         settingRecyleView();
 
     }
 
     private void settingRecyleView() {
-        allCommonList = new ArrayList<>();
+        allLesssListData = new ArrayList<>();
         linearnLayoutManager = new LinearLayoutManager(this);
         linearnLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         xRecyclerView.setLayoutManager(linearnLayoutManager);
@@ -174,53 +145,55 @@ public class ActResourseSeond extends BaseActivity  {
         xRecyclerView.setHasFixedSize(true);
 
         xRecyclerView.addItemDecoration(new RecyleViewItemDecoration(this, R.drawable.shape_recycle_item_decoration));
-        adapter = new CommentListAdapter(ActResourseSeond.this, allCommonList);
+        adapter = new StudyRecyclerAdapter(ActResourseSeond.this, allLesssListData);
         xRecyclerView.setAdapter(adapter);
-        swipe_refresh_widget.setLoadMore(true);
-        swipe_refresh_widget.setMaterialRefreshListener(new MaterialRefreshListener() {
-                        @Override
-                       public void onRefresh(MaterialRefreshLayout materialRefreshLayout) {
-                               mHandler.postDelayed(new Runnable() {
-                                        public void run() {
-                                            currentPage =1;
-                                            isLoadReflesh = true;
-                                            allCommonList.clear();
-                                            getCommntList(1);
-                                            isLoadReflesh = false;
-                                            swipe_refresh_widget.finishRefresh();
-                                             }
-                                     }, 1000);
-                            }
+        //设置Item增加、移除动画
+
+        setOnItemClick();
+        swipe_refresh_widget.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mHandler.postDelayed(new Runnable() {
+                    public void run() {
+                        isLoadReflesh = true;
+                        getDataFromNet(AcountManager.getAcountId());
+                        isLoadReflesh = false;
+                        swipe_refresh_widget.setRefreshing(false);
+                    }
+                }, 1000);
+            }
+        });
+
+        xRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                int topRowVerticalPosition =
+                        (recyclerView == null || recyclerView.getChildCount() == 0) ? 0 : recyclerView.getChildAt(0).getTop();
+                swipe_refresh_widget.setEnabled(topRowVerticalPosition >= 0);
+
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
 
 
-                               @Override
-                       public void onRefreshLoadMore(MaterialRefreshLayout materialRefreshLayout) {
-                              super.onRefreshLoadMore(materialRefreshLayout);
-                               mHandler.postDelayed(new Runnable() {
-                                      public void run() {
+    }
 
-
-                                              if (maxPage == currentPage) {
-                                                     Toast.makeText(ActResourseSeond.this, "没有更多数据了", Toast.LENGTH_SHORT).show();
-                                                  swipe_refresh_widget.finishRefreshLoadMore();
-                                                      return;
-                                                 }
-                                          isLoadMore = true;
-                                          currentPage++;
-                                          getCommntList(currentPage);
-                                          isLoadMore = false;
-                                          swipe_refresh_widget.finishRefreshLoadMore();;
-                                            }
-                                     }, 1000);
-                          }
-                     });
-
-
-
-
-
-
-
+    private void setOnItemClick(){
+        adapter.setOnItemClickListener(new StudyRecyclerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position, LessonItemBean childItemBean) {
+                Intent intent = new Intent(ActResourseSeond.this, ActStudyDetail.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("itemLessonBean", childItemBean);
+                bundle.putInt("itemPosition", position);
+                intent.putExtra("FragmentStudyBundle", bundle);
+                startActivity(intent);
+            }
+        });
     }
 
 
@@ -228,54 +201,47 @@ public class ActResourseSeond extends BaseActivity  {
     protected void initData(Bundle savedInstanceState) {
         super.initData(savedInstanceState);
 
-        if (courseId != null && NetUtil.isNetworkConnected(this)) {
-            getCommntList(1);
+        if (TextUtils.isEmpty(classif) && NetUtil.isNetworkConnected(this)) {
+            getDataFromNet(AcountManager.getAcountId());
         }
     }
 
 
-    private void getCommntList(int page) {
-        if (!isLoadMore && !isLoadReflesh){
-            DialogUtils.showDialog(this,"请稍等");
-        }
-        if (!NetUtil.isNetworkConnected(this)) {
-            DialogUtils.closeDialog();
-            Toast.makeText(ActResourseSeond.this, "网络未连接", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        String url = Constants.PATH + Constants.PATH_GetCommentsList;
+    private void getDataFromNet(String userid) {
+        //下拉刷新和加载更多就不用show
+        if (!isLoadReflesh)
+            DialogUtils.showDialog(ActResourseSeond.this, "请稍后");
+        String url = Constants.PATH + Constants.PATH_AllOfMyCourses;
         OkHttpUtils.post()
                 .url(url)
-                .addParams("pageNum", page + "")
-                .addParams("leid", courseId)
+                .addParams("userid", userid)
+                .addParams("calssif", classif)
                 .build()
-                .execute(new Callback<CommentHomeBean>() {
+                .execute(new Callback<MyLessonHomeBean>() {
                     @Override
                     public void onBefore(Request request) {
                         super.onBefore(request);
                     }
 
                     @Override
-                    public CommentHomeBean parseNetworkResponse(Response response) throws Exception {
+                    public MyLessonHomeBean parseNetworkResponse(Response response) throws Exception {
 
                         String string = response.body().string();
                         Log.e("sen", string);
-                        CommentHomeBean lesssonBean = JSON.parseObject(string, CommentHomeBean.class);
+                        MyLessonHomeBean lesssonBean = JSON.parseObject(string, MyLessonHomeBean.class);
                         return lesssonBean;
                     }
 
                     @Override
                     public void onError(Call call, Exception e) {
                         mHandler.sendEmptyMessage(GETDATA_ERROR);
-
-
                     }
 
                     @Override
-                    public void onResponse(CommentHomeBean homeBeam) {
+                    public void onResponse(MyLessonHomeBean homeBeam) {
                         Message message = Message.obtain();
                         message.obj = homeBeam;
-                        message.what = SHOW_DATA;
+                        message.what = 1;
                         mHandler.sendMessage(message);
 
                     }
@@ -285,21 +251,9 @@ public class ActResourseSeond extends BaseActivity  {
     //返回
     @OnClick(R.id.common_back)
     public void clickOnBack() {
-        //分发不同的EventBus
-        sendDifulentEventBus();
         finish();
         overridePendingTransition(android.R.anim.slide_in_left,
                 android.R.anim.slide_out_right);
-    }
-
-    @OnClick(R.id.btn_write_common)
-    public void clickOnWriteComment() {
-
-        Intent in = new Intent(this, ActWriteComment.class);
-        in.putExtra("leid", courseId);
-        startActivity(in);
-
-
     }
 
 
@@ -311,27 +265,6 @@ public class ActResourseSeond extends BaseActivity  {
         super.onDestroy();
 
     }
-    public void sendDifulentEventBus(){
-        if (!TextUtils.isEmpty(from)) {
-            if ("ActStudyDetail".equals(from)) {
-                EventBus.getDefault().post(new EventComentCountForStudy(sumbmitCount));
-            }else {
-                EventBus.getDefault().post(new EventComentCountForResouce(sumbmitCount));
-            }
-        }
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            sendDifulentEventBus();
-            finish();
-            return true;
-        }
-        return false;
-    }
-
-
 
 
 }

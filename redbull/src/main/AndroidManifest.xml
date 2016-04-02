@@ -113,6 +113,10 @@
             android:name=".activity.study.ActResouceLessonDetail"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.study.ActResourseSeond"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
 
         <!-- 下载相关的服务和provider -->
         <provider

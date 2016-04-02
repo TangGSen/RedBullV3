@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import com.sen.redbull.R;
 import com.sen.redbull.activity.ActSearchLesson;
-import com.sen.redbull.activity.study.ActResouceLessonDetail;
+import com.sen.redbull.activity.study.ActResourseSeond;
 import com.sen.redbull.adapter.ResoursCatalogAdapter;
 import com.sen.redbull.base.BaseFragment;
 import com.sen.redbull.widget.RecyleViewItemDecoration;
@@ -43,7 +43,7 @@ public class FragmentRepository extends BaseFragment {
             @Override
             public void onItemClick(View view, int position, String childItemBean) {
                 // 跳到另外列表页面去请求，这样好管理一些
-                Intent intent = new Intent(getActivity(), ActResouceLessonDetail.class);
+                Intent intent = new Intent(getActivity(), ActResourseSeond.class);
                 intent.putExtra("calssif", position + 1 + "");
                 startActivity(intent);
             }

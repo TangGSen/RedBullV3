@@ -33,6 +33,8 @@ import com.sen.redbull.tools.DataTool;
 import com.sen.redbull.tools.DialogUtils;
 import com.sen.redbull.tools.NetUtil;
 import com.sen.redbull.tools.ToastUtils;
+import com.sen.redbull.widget.BaseDialogCumstorTip;
+import com.sen.redbull.widget.CustomerDialog;
 import com.sen.redbull.widget.RecyleViewItemDecoration;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.Callback;
@@ -161,9 +163,7 @@ public class ActStudyDetail extends BaseActivity {
                 case 10:
                     boolean isSuccess = (boolean) msg.obj;
                     if (isSuccess){
-                        ToastUtils.showTextToast(ActStudyDetail.this,"退课成功");
-                        EventBus.getDefault().post(new EventKillPositonStudy(itemPosition));
-                        finish();
+                       showSelecedDialog("退课成功",true);
                     }else {
                         ToastUtils.showTextToast(ActStudyDetail.this,"退课失败,请稍后重试");
                     }
@@ -175,6 +175,27 @@ public class ActStudyDetail extends BaseActivity {
         }
     });
 
+    private void showSelecedDialog(String msg, final boolean finish) {
+
+        BaseDialogCumstorTip.getDefault().showOneMsgOneBtnDilog(new BaseDialogCumstorTip.DialogButtonOnclickLinster() {
+            @Override
+            public void onLeftButtonClick(CustomerDialog dialog) {
+                if (dialog != null && dialog.isShowing())
+                    dialog.dismiss();
+                if (finish) {
+                    EventBus.getDefault().post(new EventKillPositonStudy(itemPosition));
+                    finish();
+                }
+            }
+
+            @Override
+            public void onRigthButtonClick(CustomerDialog dialog) {
+
+            }
+        }, 220,130,ActStudyDetail.this, msg, "确定");
+    }
+
+    //显示课程详情
     private void showLessDetail(LessonCourseDetails courseDetails) {
 
         String lessName = courseDetails.getLe_name();
