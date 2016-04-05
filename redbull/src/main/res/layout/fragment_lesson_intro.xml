@@ -27,7 +27,7 @@
             android:layout_marginLeft="5dp"
             android:maxLines="2"
             android:textColor="#969696"
-            android:textSize="12sp" />
+            android:textSize="14sp" />
     </LinearLayout>
 
     <View
@@ -63,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:textColor="#969696"
-                android:textSize="12sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -87,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:textColor="#969696"
-                android:textSize="12sp" />
+                android:textSize="14sp" />
         </LinearLayout>
     </LinearLayout>
 
@@ -124,7 +124,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:textColor="#969696"
-                android:textSize="12sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -147,7 +147,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:textColor="#969696"
-                android:textSize="12sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
 
@@ -181,7 +181,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:textColor="#969696"
-            android:textSize="12sp" />
+            android:textSize="14sp" />
     </LinearLayout>
 
 

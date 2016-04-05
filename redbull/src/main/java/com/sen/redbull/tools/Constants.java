@@ -5,7 +5,7 @@ package com.sen.redbull.tools;
  */
 public class Constants {
     //腾讯 bugly
-    public static final String APPID= "900022459";
+    public static final String APPID= "";
 
     //接口
 
@@ -70,7 +70,9 @@ public static final String APK_PATH = PATH+"www/view/front/20140504/dcAppAndroid
     // 参数3：flag 类型：String 描述：1.选课操作 2.退课操作
 
     // 5.资源库
-    public static final String PATH_Repository = "MobileServer/Repository";
+
+    // 5.资源库
+    public static final String PATH_REPOSITORY = "MobileServer/Repository";
     // 参数1：search 类型：String 描述：搜索内容
     // 参数2：knoid 类型：String 描述：知识分类ID
     // 参数3：userid 类型：String 描述：用户ID

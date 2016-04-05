@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,11 +14,12 @@ import android.view.View;
 
 import com.alibaba.fastjson.JSON;
 import com.sen.redbull.R;
-import com.sen.redbull.adapter.StudyRecyclerAdapter;
+import com.sen.redbull.adapter.ResourceRecyclerAdapter;
 import com.sen.redbull.base.BaseActivity;
 import com.sen.redbull.imgloader.AnimateFirstDisplayListener;
-import com.sen.redbull.mode.LessonItemBean;
-import com.sen.redbull.mode.MyLessonHomeBean;
+import com.sen.redbull.mode.EventNoThing;
+import com.sen.redbull.mode.ResouceLessonHomeBean;
+import com.sen.redbull.mode.ResourSecondItemBean;
 import com.sen.redbull.tools.AcountManager;
 import com.sen.redbull.tools.Constants;
 import com.sen.redbull.tools.DialogUtils;
@@ -41,12 +41,11 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class ActResourseSeond extends BaseActivity {
-    @Bind(R.id.listview_comment)
+    @Bind(R.id.recycleview_resouce_second)
     RecyclerView xRecyclerView;
-    @Bind(R.id.common_back)
-    AppCompatTextView common_back;
-    @Bind(R.id.btn_write_common)
-    AppCompatImageButton btn_write_common;
+    @Bind(R.id.resouce_back)
+    AppCompatTextView resouce_back;
+
 
     @Bind(R.id.resourse_refresh_widget)
     SwipeRefreshLayout swipe_refresh_widget;
@@ -56,13 +55,13 @@ public class ActResourseSeond extends BaseActivity {
 
     private static final int GETDATA_ERROR = 0;
 
-    private StudyRecyclerAdapter adapter;
+    private ResourceRecyclerAdapter adapter;
     private boolean isLoadReflesh = false;
     private LinearLayoutManager linearnLayoutManager;
 
 
-    private List<LessonItemBean> mLesssListData;
-    private List<LessonItemBean> allLesssListData;
+    private List<ResourSecondItemBean> mLesssListData;
+    private List<ResourSecondItemBean> allLesssListData;
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -74,8 +73,8 @@ public class ActResourseSeond extends BaseActivity {
 
                 case 1:
 
-                    MyLessonHomeBean homeBeam = (MyLessonHomeBean) msg.obj;
-                    mLesssListData = homeBeam.getCourselist();
+                    ResouceLessonHomeBean homeBeam = (ResouceLessonHomeBean) msg.obj;
+                    mLesssListData = homeBeam.getCourseslist();
                     // 当返回的数据为空的时候，那么就要显示这个
                     if (mLesssListData == null) {
                         ToastUtils.showTextToast(ActResourseSeond.this, "没有数据");
@@ -89,19 +88,21 @@ public class ActResourseSeond extends BaseActivity {
                     allLesssListData.addAll(mLesssListData);
                     mLesssListData.clear();
                     showRecyclerviewItemData(allLesssListData);
+
                     break;
 
             }
             DialogUtils.closeDialog();
+            swipe_refresh_widget.setRefreshing(false);
             return false;
         }
     });
 
 
-    private void showRecyclerviewItemData(List<LessonItemBean> LesssListData) {
+    private void showRecyclerviewItemData(List<ResourSecondItemBean> LesssListData) {
         if (adapter == null) {
             //创建并设置Adapter
-            adapter = new StudyRecyclerAdapter(ActResourseSeond.this, allLesssListData);
+            adapter = new ResourceRecyclerAdapter(ActResourseSeond.this, allLesssListData);
             xRecyclerView.setAdapter(adapter);
             setOnItemClick();
         } else {
@@ -114,6 +115,11 @@ public class ActResourseSeond extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
+    }
+
+    public void onEvent(EventNoThing eventNoThing) {
+
+
     }
 
 
@@ -145,11 +151,12 @@ public class ActResourseSeond extends BaseActivity {
         xRecyclerView.setHasFixedSize(true);
 
         xRecyclerView.addItemDecoration(new RecyleViewItemDecoration(this, R.drawable.shape_recycle_item_decoration));
-        adapter = new StudyRecyclerAdapter(ActResourseSeond.this, allLesssListData);
+        adapter = new ResourceRecyclerAdapter(ActResourseSeond.this, allLesssListData);
         xRecyclerView.setAdapter(adapter);
         //设置Item增加、移除动画
 
         setOnItemClick();
+        swipe_refresh_widget.setColorSchemeResources(R.color.theme_color, R.color.theme_color);
         swipe_refresh_widget.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -158,7 +165,7 @@ public class ActResourseSeond extends BaseActivity {
                         isLoadReflesh = true;
                         getDataFromNet(AcountManager.getAcountId());
                         isLoadReflesh = false;
-                        swipe_refresh_widget.setRefreshing(false);
+
                     }
                 }, 1000);
             }
@@ -182,11 +189,11 @@ public class ActResourseSeond extends BaseActivity {
 
     }
 
-    private void setOnItemClick(){
-        adapter.setOnItemClickListener(new StudyRecyclerAdapter.OnItemClickListener() {
+    private void setOnItemClick() {
+        adapter.setOnItemClickListener(new ResourceRecyclerAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(View view, int position, LessonItemBean childItemBean) {
-                Intent intent = new Intent(ActResourseSeond.this, ActStudyDetail.class);
+            public void onItemClick(View view, int position, ResourSecondItemBean childItemBean) {
+                Intent intent = new Intent(ActResourseSeond.this, ActResouceLessonDetail.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("itemLessonBean", childItemBean);
                 bundle.putInt("itemPosition", position);
@@ -201,8 +208,12 @@ public class ActResourseSeond extends BaseActivity {
     protected void initData(Bundle savedInstanceState) {
         super.initData(savedInstanceState);
 
-        if (TextUtils.isEmpty(classif) && NetUtil.isNetworkConnected(this)) {
-            getDataFromNet(AcountManager.getAcountId());
+        if (NetUtil.isNetworkConnected(this)) {
+            if (!TextUtils.isEmpty(classif)) {
+                getDataFromNet(AcountManager.getAcountId());
+            }
+        } else {
+            ToastUtils.showTextToast(ActResourseSeond.this, "网络未连接");
         }
     }
 
@@ -211,24 +222,24 @@ public class ActResourseSeond extends BaseActivity {
         //下拉刷新和加载更多就不用show
         if (!isLoadReflesh)
             DialogUtils.showDialog(ActResourseSeond.this, "请稍后");
-        String url = Constants.PATH + Constants.PATH_AllOfMyCourses;
+        String url = Constants.PATH + Constants.PATH_REPOSITORY;
         OkHttpUtils.post()
                 .url(url)
                 .addParams("userid", userid)
                 .addParams("calssif", classif)
                 .build()
-                .execute(new Callback<MyLessonHomeBean>() {
+                .execute(new Callback<ResouceLessonHomeBean>() {
                     @Override
                     public void onBefore(Request request) {
                         super.onBefore(request);
                     }
 
                     @Override
-                    public MyLessonHomeBean parseNetworkResponse(Response response) throws Exception {
+                    public ResouceLessonHomeBean parseNetworkResponse(Response response) throws Exception {
 
                         String string = response.body().string();
                         Log.e("sen", string);
-                        MyLessonHomeBean lesssonBean = JSON.parseObject(string, MyLessonHomeBean.class);
+                        ResouceLessonHomeBean lesssonBean = JSON.parseObject(string, ResouceLessonHomeBean.class);
                         return lesssonBean;
                     }
 
@@ -238,7 +249,7 @@ public class ActResourseSeond extends BaseActivity {
                     }
 
                     @Override
-                    public void onResponse(MyLessonHomeBean homeBeam) {
+                    public void onResponse(ResouceLessonHomeBean homeBeam) {
                         Message message = Message.obtain();
                         message.obj = homeBeam;
                         message.what = 1;
@@ -249,7 +260,7 @@ public class ActResourseSeond extends BaseActivity {
     }
 
     //返回
-    @OnClick(R.id.common_back)
+    @OnClick(R.id.resouce_back)
     public void clickOnBack() {
         finish();
         overridePendingTransition(android.R.anim.slide_in_left,

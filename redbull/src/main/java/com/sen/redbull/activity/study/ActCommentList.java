@@ -28,6 +28,7 @@ import com.sen.redbull.mode.EventSubmitComentSucess;
 import com.sen.redbull.tools.Constants;
 import com.sen.redbull.tools.DialogUtils;
 import com.sen.redbull.tools.NetUtil;
+import com.sen.redbull.tools.ToastUtils;
 import com.sen.redbull.widget.RecyleViewItemDecoration;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.Callback;
@@ -110,9 +111,7 @@ public class ActCommentList extends BaseActivity  {
                     //创建并设置Adapter
                     if (adapter == null) {
 
-                        Log.e("sen", "刷新222444");
                     } else {
-                        Log.e("sen", "刷新222");
                         adapter.notifyDataSetChanged();
                     }
 
@@ -126,6 +125,7 @@ public class ActCommentList extends BaseActivity  {
         }
     });
     private LinearLayoutManager linearnLayoutManager;
+    private boolean canWrite;
 
 
     @Override
@@ -140,7 +140,6 @@ public class ActCommentList extends BaseActivity  {
             allCommonList.clear();
         } else {
             allCommonList = new ArrayList<>();
-
         }
         getCommntList(1);
     }
@@ -152,6 +151,7 @@ public class ActCommentList extends BaseActivity  {
         Intent intent = getIntent();
         courseId = intent.getStringExtra("leid");
         from = intent.getStringExtra("from");
+        canWrite = intent.getBooleanExtra("canWrite",false);
 
     }
 
@@ -294,7 +294,10 @@ public class ActCommentList extends BaseActivity  {
 
     @OnClick(R.id.btn_write_common)
     public void clickOnWriteComment() {
-
+        if (!canWrite){
+            ToastUtils.showTextToast(ActCommentList.this,"您还没选课,请返回选课后写评论");
+            return;
+        }
         Intent in = new Intent(this, ActWriteComment.class);
         in.putExtra("leid", courseId);
         startActivity(in);

@@ -1,5 +1,6 @@
 package com.sen.redbull.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,10 +16,11 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.sen.redbull.R;
-import com.sen.redbull.adapter.StudyRecyclerAdapter;
+import com.sen.redbull.activity.study.ActResouceLessonDetail;
+import com.sen.redbull.adapter.ResourceRecyclerAdapter;
 import com.sen.redbull.base.BaseActivity;
-import com.sen.redbull.mode.LessonItemBean;
-import com.sen.redbull.mode.LessonListHomeBean;
+import com.sen.redbull.mode.ResouceLessonHomeBean;
+import com.sen.redbull.mode.ResourSecondItemBean;
 import com.sen.redbull.tools.AcountManager;
 import com.sen.redbull.tools.Constants;
 import com.sen.redbull.tools.DialogUtils;
@@ -51,12 +53,12 @@ public class ActSearchLesson extends BaseActivity {
     @Bind(R.id.btn_back_search)
     AppCompatTextView btn_back_search;
 
-    private StudyRecyclerAdapter adapter;
+    private ResourceRecyclerAdapter adapter;
 
     private static final int GETDATA_ERROR = 0;
     private static final int SHOW_DATA = 1;
-    private List<LessonItemBean> mLesssListData;
-    private List<LessonItemBean> allLesssListData;
+    private List<ResourSecondItemBean> mLesssListData;
+    private List<ResourSecondItemBean> allLesssListData;
 
     //延迟去搜索，防止用户快速多点
     private static final int DELAY_TO_SEARCH = 3;
@@ -72,11 +74,11 @@ public class ActSearchLesson extends BaseActivity {
                     break;
                 case 1:
 
-                    LessonListHomeBean homeBeam = (LessonListHomeBean) msg.obj;
+                    ResouceLessonHomeBean homeBeam = (ResouceLessonHomeBean) msg.obj;
                     if (homeBeam==null){
                         return false;
                     }
-                    mLesssListData = homeBeam.getCoursesList();
+                    mLesssListData = homeBeam.getCourseslist();
                     if (mLesssListData==null){
                         return false;
                     }
@@ -104,20 +106,20 @@ public class ActSearchLesson extends BaseActivity {
         }
     });
 
-    private void showRecyclerviewItemData(List<LessonItemBean> LesssListData) {
+    private void showRecyclerviewItemData(List<ResourSecondItemBean> LesssListData) {
         if (adapter == null) {
             //创建并设置Adapter
-            adapter = new StudyRecyclerAdapter(ActSearchLesson.this, LesssListData);
+            adapter = new ResourceRecyclerAdapter(ActSearchLesson.this, LesssListData);
             recycle_search.setAdapter(adapter);
-            adapter.setOnItemClickListener(new StudyRecyclerAdapter.OnItemClickListener() {
+            adapter.setOnItemClickListener(new ResourceRecyclerAdapter.OnItemClickListener() {
                 @Override
-                public void onItemClick(View view, int position, LessonItemBean childItemBean) {
-                  /*  Intent intent = new Intent(ActSearchLesson.this, ActResoucesStudyDetail.class);
+                public void onItemClick(View view, int position, ResourSecondItemBean childItemBean) {
+                   Intent intent = new Intent(ActSearchLesson.this, ActResouceLessonDetail.class);
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("itemLessonBean", childItemBean);
                     bundle.putInt("itemPosition", position);
                     intent.putExtra("FragmentStudyBundle", bundle);
-                    startActivity(intent);*/
+                    startActivity(intent);
                 }
             });
         } else {
@@ -160,24 +162,24 @@ public class ActSearchLesson extends BaseActivity {
             return;
         }
         DialogUtils.showDialog(ActSearchLesson.this, "请稍后");
-        String url = Constants.PATH + Constants.PATH_Repository;
+        String url = Constants.PATH + Constants.PATH_REPOSITORY;
         OkHttpUtils.post()
                 .url(url)
                 .addParams("userid", AcountManager.getAcountId())
                 .addParams("search", search)
                 .build()
-                .execute(new Callback<LessonListHomeBean>() {
+                .execute(new Callback<ResouceLessonHomeBean>() {
                     @Override
                     public void onBefore(Request request) {
                         super.onBefore(request);
                     }
 
                     @Override
-                    public LessonListHomeBean parseNetworkResponse(Response response) throws Exception {
+                    public ResouceLessonHomeBean parseNetworkResponse(Response response) throws Exception {
 
                         String string = response.body().string();
                         Log.e("sen", string);
-                        LessonListHomeBean lesssonBean = JSON.parseObject(string, LessonListHomeBean.class);
+                        ResouceLessonHomeBean lesssonBean = JSON.parseObject(string, ResouceLessonHomeBean.class);
                         return lesssonBean;
                     }
 
@@ -189,7 +191,7 @@ public class ActSearchLesson extends BaseActivity {
                     }
 
                     @Override
-                    public void onResponse(LessonListHomeBean homeBeam) {
+                    public void onResponse(ResouceLessonHomeBean homeBeam) {
                         Message message = Message.obtain();
                         message.obj = homeBeam;
                         message.what = SHOW_DATA;

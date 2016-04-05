@@ -19,8 +19,8 @@ import com.sen.redbull.R;
 import com.sen.redbull.activity.VideoPlayerActivity;
 import com.sen.redbull.adapter.SectionsAdapter;
 import com.sen.redbull.base.BaseActivity;
+import com.sen.redbull.mode.EventComentCountForStudy;
 import com.sen.redbull.mode.EventKillPositonStudy;
-import com.sen.redbull.mode.EventNoThing;
 import com.sen.redbull.mode.LessonCommentCounts;
 import com.sen.redbull.mode.LessonCourseDetails;
 import com.sen.redbull.mode.LessonHomeCourseDatails;
@@ -101,6 +101,7 @@ public class ActStudyDetail extends BaseActivity {
     private static final int USELECTED_OPTION_SUCCESS = 10;
 
     private List<SectionItemBean> setionList;
+    private String counts;
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -109,7 +110,7 @@ public class ActStudyDetail extends BaseActivity {
             switch (msg.what) {
 
                 case 0:
-                    String counts = (String) msg.obj;
+                    counts = (String) msg.obj;
                     tv_commons_count.setText("用户评论(" + counts + ")");
                     break;
                 case 1:
@@ -248,9 +249,12 @@ public class ActStudyDetail extends BaseActivity {
         EventBus.getDefault().register(this);
     }
     //Eventbus 2.0 必须要onEvent 开头的，有空看看3.0 的用法
-    public void onEvent(EventNoThing eventNoThing) {
-
-
+    public void onEvent(EventComentCountForStudy event) {
+        if (tv_commons_count!=null && counts !=null){
+            int count = Integer.parseInt(counts) +event.getSucessCount();
+            tv_commons_count.setText("用户评论(" + count + ")");
+            counts = count+"";
+        }
     }
 
     @Override
@@ -373,7 +377,6 @@ public class ActStudyDetail extends BaseActivity {
                     public SectionBean parseNetworkResponse(Response response) throws Exception {
 
                         String string = response.body().string();
-                        Log.e("sen*******************", string);
                         SectionBean lesssonBean = JSON.parseObject(string, SectionBean.class);
                         return lesssonBean;
 
@@ -534,12 +537,13 @@ public class ActStudyDetail extends BaseActivity {
         Intent in = new Intent(this, ActCommentList.class);
         in.putExtra("leid", childItemBean.getLeid());
         in.putExtra("from", "ActStudyDetail");
+        in.putExtra("canWrite",true);
         startActivity(in);
     }
 
     @Override
     protected void onDestroy() {
-          EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(this);
         mHandler.removeCallbacksAndMessages(null);
         super.onDestroy();
 

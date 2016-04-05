@@ -19,12 +19,12 @@ import com.sen.redbull.R;
 import com.sen.redbull.activity.VideoPlayerActivity;
 import com.sen.redbull.adapter.SectionsAdapter;
 import com.sen.redbull.base.BaseActivity;
-import com.sen.redbull.mode.EventKillPositonStudy;
-import com.sen.redbull.mode.EventNoThing;
+import com.sen.redbull.mode.EventComentCountForResouce;
+import com.sen.redbull.mode.EventLoveClickFromRescouce;
 import com.sen.redbull.mode.LessonCommentCounts;
 import com.sen.redbull.mode.LessonCourseDetails;
 import com.sen.redbull.mode.LessonHomeCourseDatails;
-import com.sen.redbull.mode.LessonItemBean;
+import com.sen.redbull.mode.ResourSecondItemBean;
 import com.sen.redbull.mode.SectionBean;
 import com.sen.redbull.mode.SectionItemBean;
 import com.sen.redbull.tools.AcountManager;
@@ -83,7 +83,7 @@ public class ActResouceLessonDetail extends BaseActivity {
     RecyclerView listview_lesson;
 
 
-    private LessonItemBean childItemBean;
+    private ResourSecondItemBean childItemBean;
     private int itemPosition;
 
     private static final int SHOW_COMMENT_DATA = 0;
@@ -98,7 +98,10 @@ public class ActResouceLessonDetail extends BaseActivity {
     private static final int USELECTED_OPTION_FAIL = 9;
     private static final int USELECTED_OPTION_SUCCESS = 10;
 
+    // 是否选课标志 -1 是在请求是否选课前的状态 1 选课，2，未选课
+    private int isSelected = -1;
     private List<SectionItemBean> setionList;
+    private String counts;
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -107,7 +110,7 @@ public class ActResouceLessonDetail extends BaseActivity {
             switch (msg.what) {
 
                 case 0:
-                    String counts = (String) msg.obj;
+                    counts = (String) msg.obj;
                     tv_commons_count.setText("用户评论(" + counts + ")");
                     break;
                 case 1:
@@ -146,26 +149,45 @@ public class ActResouceLessonDetail extends BaseActivity {
 
                     break;
                 case 6:
+                    isSelected = 1;
+                    btn_lesson_collection.setText("退课");
                     getSectionListData();
                     break;
                 case 7:
+                    isSelected = 2;
+                    btn_lesson_collection.setText("我要选课");
                     DialogUtils.closeDialog();
-                    tv_data_null_tip.setVisibility(View.VISIBLE);
+                    showDataOrNot(false);
                     break;
                 case 8:
-                    tv_data_null_tip.setVisibility(View.GONE);
+                    showDataOrNot(true);
                     break;
                 case 9:
-                   ToastUtils.showTextToast(ActResouceLessonDetail.this,"网络异常，退课失败");
+                    ToastUtils.showTextToast(ActResouceLessonDetail.this, "网络异常，请重试");
                     break;
                 case 10:
                     boolean isSuccess = (boolean) msg.obj;
-                    if (isSuccess){
-                        ToastUtils.showTextToast(ActResouceLessonDetail.this,"退课成功");
-                        EventBus.getDefault().post(new EventKillPositonStudy(itemPosition));
-                        finish();
-                    }else {
-                        ToastUtils.showTextToast(ActResouceLessonDetail.this,"退课失败,请稍后重试");
+                    if (isSuccess ) {
+                        if (isSelected==1){
+                            isSelected =2;
+                            ToastUtils.showTextToast(ActResouceLessonDetail.this, "退课成功");
+                            btn_lesson_collection.setText("我要选课");
+                            showDataOrNot(false);
+                            //去改变 我的学习那边的数据
+                            EventBus.getDefault().post(new EventLoveClickFromRescouce());
+                        }else if(isSelected ==2){
+                            isSelected =1;
+                            ToastUtils.showTextToast(ActResouceLessonDetail.this, "选课成功");
+                            btn_lesson_collection.setText("退课");
+                            showDataOrNot(true);
+                            getSectionListData();
+                            EventBus.getDefault().post(new EventLoveClickFromRescouce());
+
+                        }
+
+
+                    } else {
+                        ToastUtils.showTextToast(ActResouceLessonDetail.this, "退课失败,请稍后重试");
                     }
                     break;
 
@@ -175,8 +197,12 @@ public class ActResouceLessonDetail extends BaseActivity {
         }
     });
 
-    private void showLessDetail(LessonCourseDetails courseDetails) {
 
+    private void showDataOrNot(boolean isShow){
+        tv_data_null_tip.setVisibility(isShow?View.GONE:View.VISIBLE);
+        listview_lesson.setVisibility(isShow?View.VISIBLE:View.GONE);
+    }
+    private void showLessDetail(LessonCourseDetails courseDetails) {
         String lessName = courseDetails.getLe_name();
         if (TextUtils.isEmpty(lessName)) {
             lessName = "";
@@ -226,18 +252,21 @@ public class ActResouceLessonDetail extends BaseActivity {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
     }
+
     //Eventbus 2.0 必须要onEvent 开头的，有空看看3.0 的用法
-    public void onEvent(EventNoThing eventNoThing) {
-
-
+    public void onEvent(EventComentCountForResouce event) {
+        if (tv_commons_count!=null && counts !=null){
+            int count = Integer.parseInt(counts) +event.getSucessCount();
+            tv_commons_count.setText("用户评论(" + count + ")");
+            counts = count+"";
+        }
     }
-
     @Override
     protected void init() {
         super.init();
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("FragmentStudyBundle");
-        childItemBean = (LessonItemBean) bundle.getSerializable("itemLessonBean");
+        childItemBean = (ResourSecondItemBean) bundle.getSerializable("itemLessonBean");
         itemPosition = bundle.getInt("itemPosition");
 
     }
@@ -281,7 +310,7 @@ public class ActResouceLessonDetail extends BaseActivity {
 
     //设置数据
     private void setViewData() {
-        tv_head_name.setText(TextUtils.isEmpty(childItemBean.getName()) ? " " : childItemBean.getName());
+        tv_head_name.setText(TextUtils.isEmpty(childItemBean.getLe_name()) ? " " : childItemBean.getLe_name());
         //这个收藏按钮在资源库和学习进这个界面操作的不一样
         btn_lesson_collection.setText("退课");
 
@@ -419,13 +448,13 @@ public class ActResouceLessonDetail extends BaseActivity {
     }
 
     //退课
-    private void unSelectedLess() {
+    private void SelectedLess(String flag) {
         String url = Constants.PATH + Constants.PATH_COURSESELECTION;
         OkHttpUtils.post()
                 .url(url)
                 .addParams("leid", childItemBean.getLeid())
                 .addParams("userid", AcountManager.getAcountId())
-                .addParams("flag", "2")
+                .addParams("flag", flag)
                 .build()
                 .execute(new Callback<Boolean>() {
                     @Override
@@ -439,7 +468,7 @@ public class ActResouceLessonDetail extends BaseActivity {
                         String string = response.body().string();
                         Log.e("sen*******************", string);
                         Boolean success = JSON.parseObject(string).getBoolean("success");
-                        if (success!=null){
+                        if (success != null) {
                             return success;
                         }
                         return false;
@@ -473,11 +502,17 @@ public class ActResouceLessonDetail extends BaseActivity {
                 android.R.anim.slide_out_right);
     }
 
+
+
     //返回
     @OnClick(R.id.btn_lesson_collection)
     public void clickUnselected() {
         if (NetUtil.isNetworkConnected(this)) {
-            unSelectedLess();
+            if (isSelected==1){
+                SelectedLess("2");
+            }else if (isSelected ==2){
+                SelectedLess("1");
+            }
         } else {
             ToastUtils.showTextToast(ActResouceLessonDetail.this, "网络未连接");
         }
@@ -486,7 +521,22 @@ public class ActResouceLessonDetail extends BaseActivity {
 
     @OnClick(R.id.btn_startPlayer)
     public void startVideo() {
-        videoStartPlay(0);
+        if (setionList!=null && setionList.size()!=0){
+            videoStartPlay(0);
+        }else {
+           switch (isSelected){
+               case -1:
+                   ToastUtils.showTextToast(ActResouceLessonDetail.this,"请检查网络获取课程章节");
+                   break;
+               case 1:
+                   ToastUtils.showTextToast(ActResouceLessonDetail.this,"没有课程章节数据");
+                   break;
+               case 2:
+                   ToastUtils.showTextToast(ActResouceLessonDetail.this,"请选课查看课程");
+                   break;
+           }
+        }
+
     }
 
     // 播放Video
@@ -512,13 +562,20 @@ public class ActResouceLessonDetail extends BaseActivity {
     public void startComents() {
         Intent in = new Intent(this, ActCommentList.class);
         in.putExtra("leid", childItemBean.getLeid());
-        in.putExtra("from", "ActStudyDetail");
+        in.putExtra("from", "ActResouce");
+        boolean can =false;
+        if (isSelected ==1){
+            can = true;
+        }else if (isSelected ==2){
+            can = false;
+        }
+        in.putExtra("canWrite",can);
         startActivity(in);
     }
 
     @Override
     protected void onDestroy() {
-          EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(this);
         mHandler.removeCallbacksAndMessages(null);
         super.onDestroy();
 

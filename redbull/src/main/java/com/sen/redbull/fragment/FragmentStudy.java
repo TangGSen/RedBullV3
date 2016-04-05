@@ -88,9 +88,8 @@ public class FragmentStudy extends BaseFragment implements SwipeRefreshLayout.On
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            //下拉刷新和加载更多的时候就不用diaogle
-            if (!isReFlesh)
-                DialogUtils.closeDialog();
+
+
             switch (msg.what) {
                 case 0:
                     setTipNoData(true);
@@ -121,6 +120,9 @@ public class FragmentStudy extends BaseFragment implements SwipeRefreshLayout.On
                     break;
 
             }
+            //该关闭就关闭
+            DialogUtils.closeDialog();
+            swipe_refresh_widget.setRefreshing(false);
             return false;
         }
     });
@@ -384,7 +386,7 @@ public class FragmentStudy extends BaseFragment implements SwipeRefreshLayout.On
                 isReFlesh = true;
 
                 getStudyData();
-                swipe_refresh_widget.setRefreshing(false);
+
                 isReFlesh = false;
             }
         }, 1000);

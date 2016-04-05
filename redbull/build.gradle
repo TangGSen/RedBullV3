@@ -17,6 +17,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+}
+
+task clean(type: Exec) {
+    ext.lockhunter = "\\E:\\LockHunterForStudio\\LockHunter.exe\\"
+    def buildDir = file(new File("build"))
+    commandLine 'cmd', "$lockhunter", '/delete', '/silent', buildDir
 }
 
 dependencies {

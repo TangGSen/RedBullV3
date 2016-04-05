@@ -133,6 +133,7 @@
                 android:layout_height="30dp"
                 android:layout_marginTop="10dp"
                 android:gravity="center_horizontal"
+                android:textSize="@dimen/fragment_font_16sp"
                 android:text="请先选课查看课程章节"
                 android:visibility="gone" />
 
@@ -226,9 +227,12 @@
                 android:id="@+id/tv_content_introduction"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/common_8dp"
+                android:layout_marginTop="@dimen/common_8dp"
+                android:layout_marginLeft="@dimen/common_8dp"
+                android:layout_marginRight="@dimen/common_8dp"
+                android:layout_marginBottom="?actionBarSize"
                 android:textColor="@color/font_h2"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

@@ -11,7 +11,7 @@
 
 
         <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/common_back"
+            android:id="@+id/resouce_back"
             android:layout_width="@dimen/common_48dp"
             android:layout_height="@dimen/common_48dp"
             android:layout_gravity="left|center"
@@ -42,7 +42,7 @@
         app:progress_colors="@array/my_material_colors">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/listview_comment"
+            android:id="@+id/recycleview_resouce_second"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="none" />
