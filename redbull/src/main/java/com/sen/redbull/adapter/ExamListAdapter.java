@@ -3,14 +3,14 @@ package com.sen.redbull.adapter;
 import android.content.Context;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.sen.redbull.R;
-import com.sen.redbull.exam.ExamItemBean;
-import com.sen.redbull.tools.ResourcesUtils;
-import com.sen.redbull.tools.StringUItils;
+import com.sen.redbull.mode.ExamItemBean;
+import com.sen.redbull.tools.DataTool;
 
 import java.util.List;
 
@@ -47,47 +47,44 @@ public class ExamListAdapter extends RecyclerView.Adapter<ExamListAdapter.ViewHo
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_examlist_layout, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_exam_layout, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
 
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder viewHodler, final int position) {
 
-        ExamItemBean itemBean = mData.get(position);
 
-        holder.tv_exam_name.setText(itemBean.getExamname());
-        holder.tv_has_enter.setText("已考："+itemBean.getYetjoincon()+"         允许："+itemBean.getJoincon());
-        String time ="时间："+ StringUItils.delString(itemBean.getBegindate(),10)+"至"+StringUItils.delString(itemBean.getEnddate(),10);
-        holder.tv_test_time.setText(time);
+        ExamItemBean examBean = mData.get(position);
+        viewHodler.tv_exam_name.setText("试卷名称："+examBean.getTitle());
+        viewHodler.txt_pass.setText("通过分数："+examBean.getPass_mark());
 
-        int examType =Integer.parseInt(itemBean.getExamtype());
-        String examTypeStr = "";
-        if (examType==0){
-            examTypeStr ="未开始";
-            holder.tv_exam_type.setBackgroundDrawable(ResourcesUtils.getResDrawable(mContext,R.drawable.bg_exam_unenter));
-        }else if (examType==1){
-            examTypeStr ="进行中";
-            holder.tv_exam_type.setBackgroundDrawable(ResourcesUtils.getResDrawable(mContext,R.drawable.bg_exam_type));
-        }else if (examType ==2){
-            holder.tv_exam_type.setBackgroundDrawable(ResourcesUtils.getResDrawable(mContext,R.drawable.bg_exam_unenter));
-            examTypeStr ="已结束";
+        viewHodler.txt_join_able.setText("可考次数："+examBean.getJoincount());
+        viewHodler.txt_had_join.setText("已考次数："+examBean.getYetjoincount());
+        String str_begin =examBean.getEntertime_begin();
+        String str_end =examBean.getEntertime_end();
+        if (!TextUtils.isEmpty(str_begin)) {
+            str_begin = DataTool.longToTime(Long.parseLong(str_begin));
+        }else {
+            str_begin = "";
         }
-        holder.tv_exam_type.setText(examTypeStr);
-        if (position%2==0){
-            holder.test_view_bar.setBackgroundColor(ResourcesUtils.getResColor(mContext,R.color.view_bar_blue));
-        }else{
-            holder.test_view_bar.setBackgroundColor(ResourcesUtils.getResColor(mContext,R.color.view_bar_orgen));
+        if (!TextUtils.isEmpty(str_end)) {
+            str_end =DataTool.longToTime(Long.parseLong(str_end));
+        }else {
+            str_end = "";
         }
+
+        viewHodler.txt_exam_begin.setText("开考日期："+str_begin);
+        viewHodler.txt_exam_end.setText("结束日期："+str_end);
 
         if (onItemClickListener != null) {
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
+            viewHodler.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-                    onItemClickListener.onItemClick(holder.itemView, position,mData.get(position));
+                    onItemClickListener.onItemClick(viewHodler.itemView, position,mData.get(position));
                 }
 
             });
@@ -111,16 +108,16 @@ public class ExamListAdapter extends RecyclerView.Adapter<ExamListAdapter.ViewHo
 
     //自定义的ViewHolder，持有每个Item的的所有界面元素
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public AppCompatTextView tv_exam_name,tv_test_time,tv_exam_type,tv_has_enter;
-        public View test_view_bar;
+        public AppCompatTextView tv_exam_name,txt_pass,txt_exam_begin,txt_join_able,txt_exam_end,txt_had_join;
 
         public ViewHolder(View view) {
             super(view);
             tv_exam_name = (AppCompatTextView) view.findViewById(R.id.tv_exam_name);
-            tv_test_time = (AppCompatTextView) view.findViewById(R.id.tv_test_time);
-            tv_exam_type = (AppCompatTextView) view.findViewById(R.id.tv_exam_type);
-            tv_has_enter = (AppCompatTextView) view.findViewById(R.id.tv_has_enter);
-            test_view_bar = (View) view.findViewById(R.id.test_view_bar);
+            txt_pass = (AppCompatTextView) view.findViewById(R.id.txt_pass);
+            txt_exam_begin = (AppCompatTextView) view.findViewById(R.id.txt_exam_begin);
+            txt_exam_end = (AppCompatTextView) view.findViewById(R.id.txt_exam_end);
+            txt_join_able = (AppCompatTextView) view.findViewById(R.id.txt_join_able);
+            txt_had_join = (AppCompatTextView) view.findViewById(R.id.txt_had_join);
 
 
         }

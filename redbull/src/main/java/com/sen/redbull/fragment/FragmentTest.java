@@ -19,8 +19,6 @@ import com.sen.redbull.R;
 import com.sen.redbull.activity.exam.ActExamDetail;
 import com.sen.redbull.adapter.ExamListAdapter;
 import com.sen.redbull.base.BaseFragment;
-import com.sen.redbull.exam.ExamHomeBean;
-import com.sen.redbull.exam.ExamItemBean;
 import com.sen.redbull.mode.EventSubmitAnswerSucess;
 import com.sen.redbull.tools.AcountManager;
 import com.sen.redbull.tools.Constants;
@@ -62,9 +60,7 @@ public class FragmentTest extends BaseFragment  implements SwipeRefreshLayout.On
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            //下拉刷新和加载更多的时候就不用diaogle
-            if (!isReFlesh)
-                DialogUtils.closeDialog();
+
             switch (msg.what) {
                 case 0:
 
@@ -96,6 +92,8 @@ public class FragmentTest extends BaseFragment  implements SwipeRefreshLayout.On
 
                     break;
             }
+            DialogUtils.closeDialog();
+            swipe_refresh_widget.setRefreshing(false);
             return false;
         }
     });
@@ -238,6 +236,7 @@ public class FragmentTest extends BaseFragment  implements SwipeRefreshLayout.On
     @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
+        mHandler.removeCallbacksAndMessages(null);
         super.onDestroy();
     }
 
@@ -247,7 +246,6 @@ public class FragmentTest extends BaseFragment  implements SwipeRefreshLayout.On
             public void run() {
                 isReFlesh = true;
                 getExamListData();
-                swipe_refresh_widget.setRefreshing(false);
                 isReFlesh = false;
             }
         }, 1000);

@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import com.sen.redbull.R;
 import com.sen.redbull.base.BaseActivity;
-import com.sen.redbull.exam.ExamItemBean;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

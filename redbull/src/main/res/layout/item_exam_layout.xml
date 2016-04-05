@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/img_exam_item"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="15dp"
+        android:src="@mipmap/exam_defualt"
+        android:scaleType="fitXY" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_exam_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="2dp"
+        android:layout_toRightOf="@+id/img_exam_item"
+        android:maxLines="2"
+        android:textColor="@color/font_h1"
+        android:text="姓名姓名姓名姓名姓名姓名姓名姓名姓名姓名姓名姓名姓名姓名姓名姓名姓名姓名"
+        android:textSize="14sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_exam_name"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@+id/img_exam_item"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/common_4dp"
+            android:layout_weight="1"
+            android:paddingBottom="@dimen/common_4dp"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/txt_pass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="3dp"
+                android:layout_marginRight="5dp"
+                android:singleLine="true"
+                android:text="考试通过分数："
+                android:textColor="@color/font_h2"
+                android:textSize="12sp" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/txt_join_able"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="3dp"
+                android:text="试卷可考次数："
+                android:textColor="@color/font_h2"
+                android:textSize="12sp" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/txt_had_join"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="已经进考次数"
+                android:textColor="@color/font_h2"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="@dimen/common_4dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/txt_exam_begin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="3dp"
+                android:layout_marginRight="5dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="考试通过分数："
+                android:textColor="@color/font_h2"
+                android:textSize="12sp" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/txt_exam_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="3dp"
+                android:ellipsize="end"
+                android:text="试卷可考次数："
+                android:textColor="@color/font_h2"
+                android:textSize="12sp" />
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
