@@ -1,6 +1,5 @@
 package com.sen.redbull.fragment;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -10,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnGroupClickListener;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
@@ -33,14 +31,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import okhttp3.Call;
 import okhttp3.Response;
 
 
-@SuppressLint("NewApi")
 public class FragmentBbs extends BaseFragment {
-	private TextView tv_theme;
-	private ExpandableListView explistview;
 	private List<BbsListBean> bbsListBean;
 	private List<BbsBean> bbsDate;
 	private BbsExpandAdapter adapter;
@@ -49,12 +45,7 @@ public class FragmentBbs extends BaseFragment {
 	ExpandableListView bbs_expandablelistview;
 	private static final int GETDATA_ERROR = 0;
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-							 Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		return inflater.inflate(R.layout.fragment_bbs_layout, container, false);
-	}
+
 
 	@Override
 	protected void dealAdaptationToPhone() {
@@ -63,16 +54,17 @@ public class FragmentBbs extends BaseFragment {
 
 	@Override
 	protected View initViews(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+		rootView = inflater.inflate(R.layout.fragment_bbs_layout, container, false);
+		ButterKnife.bind(this, rootView);
 		settingListView();
-		return null;
+		return rootView;
 	}
 
 	private void settingListView() {
-		explistview.setGroupIndicator(null);
+		bbs_expandablelistview.setGroupIndicator(null);
 		bbsListBean = new ArrayList<BbsListBean>();
 		bbsDate = new ArrayList<BbsBean>();
-		explistview.setOnGroupClickListener(new OnGroupClickListener() {
+		bbs_expandablelistview.setOnGroupClickListener(new OnGroupClickListener() {
 
 			@Override
 			public boolean onGroupClick(ExpandableListView arg0, View arg1,
@@ -109,10 +101,10 @@ public class FragmentBbs extends BaseFragment {
 					bbsListBean =bbsDatas.getBbsListBean();
 					bbsDate = bbsDatas.getBbsDate();
 					adapter = new BbsExpandAdapter(getActivity(), bbsListBean, bbsDate);
-					explistview.setAdapter(adapter);
+					bbs_expandablelistview.setAdapter(adapter);
 					for (int i = 0; i < bbsListBean.size(); i++) {
 						if (bbsListBean.get(i).getTbztzbbs() != null) {
-							explistview.expandGroup(i);
+							bbs_expandablelistview.expandGroup(i);
 						}
 
 					}
@@ -129,8 +121,7 @@ public class FragmentBbs extends BaseFragment {
 
 
 	private void getDataFromNet(String userid) {
-		//下拉刷新和加载更多就不用show
-		//if (!isReFlesh)
+
 		DialogUtils.showDialog(getActivity(), ResourcesUtils.getResString(getContext(), R.string.dialog_show_wait));
 		String url = Constants.PATH + Constants.PATH_BBSList;
 		OkHttpUtils.post()
