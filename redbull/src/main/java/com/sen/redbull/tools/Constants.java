@@ -125,13 +125,14 @@ public static final String APK_PATH = PATH+"www/view/front/20140504/dcAppAndroid
 
     // 12. 发主题或者是回帖
     public static final String PATH_UserPosting = "MobileServer/UserPosting";
-
     // 参数1：flag 类型：String 描述：1.发主帖 2.回主帖
     // 参数2：userid 类型：String 描述：用户ID
     // 参数3：content 类型：String 描述：发帖或回帖的内容
     // 参数4：ask_id 类型：String 描述：主题ID
     // 参数5：title 类型：String 描述：主题的标题
     // 参数6：bbsid 类型：String 描述：论坛ID
+
+
 
     // 6. 获得试题分类列表
     public static final String PATH_JobCategory = "MobileServer/JobCategory";

@@ -15,9 +15,9 @@ import android.widget.FrameLayout;
 
 import com.sen.redbull.R;
 import com.sen.redbull.base.BaseActivity;
+import com.sen.redbull.fragment.FragmentBbs;
 import com.sen.redbull.fragment.FragmentRepository;
 import com.sen.redbull.fragment.FragmentStudy;
-import com.sen.redbull.fragment.FragmentTest;
 import com.sen.redbull.tools.ResourcesUtils;
 import com.sen.redbull.tools.ToastUtils;
 
@@ -42,7 +42,7 @@ public class MainActivity extends BaseActivity {
     FragmentManager mFragmentManager;
 
     private FragmentStudy mFragmentStudy;
-    private FragmentTest mFragmentTest;
+    private FragmentBbs mFragmentBbs;
     private FragmentRepository mFragmentRepository;
 
     private int currentFragPosition = 0;
@@ -75,7 +75,7 @@ public class MainActivity extends BaseActivity {
             currentFragPosition = savedInstanceState.getInt(FRAG_POSITION,0);
             Log.e("sen","恢复的状态"+currentFragPosition);
             mFragmentStudy = (FragmentStudy) mFragmentManager.findFragmentByTag(tabTiles[0]);
-            mFragmentTest = (FragmentTest) mFragmentManager.findFragmentByTag(tabTiles[1]);
+            mFragmentBbs = (FragmentBbs) mFragmentManager.findFragmentByTag(tabTiles[1]);
             mFragmentRepository = (FragmentRepository) mFragmentManager.findFragmentByTag(tabTiles[2]);
         }
         layout_buttom_tab.getTabAt(currentFragPosition).select();
@@ -100,11 +100,11 @@ public class MainActivity extends BaseActivity {
                 }
                 break;
             case 1:
-                if (mFragmentTest == null) {
-                    mFragmentTest = new FragmentTest();
-                    transaction.add(R.id.home_layout_content, mFragmentTest, tabTiles[position]);
+                if (mFragmentBbs == null) {
+                    mFragmentBbs = new FragmentBbs();
+                    transaction.add(R.id.home_layout_content, mFragmentBbs, tabTiles[position]);
                 } else {
-                    transaction.show(mFragmentTest);
+                    transaction.show(mFragmentBbs);
                 }
                 break;
             case 2:
@@ -125,8 +125,8 @@ public class MainActivity extends BaseActivity {
         if (mFragmentStudy != null) {
             transaction.hide(mFragmentStudy);
         }
-        if (mFragmentTest != null) {
-            transaction.hide(mFragmentTest);
+        if (mFragmentBbs != null) {
+            transaction.hide(mFragmentBbs);
         }
         if (mFragmentRepository != null) {
             transaction.hide(mFragmentRepository);

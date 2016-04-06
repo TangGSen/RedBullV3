@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white" >
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/bbs_tv_theme"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:gravity="center"
+        android:text="论坛" 
+        android:textSize="@dimen/common_18sp"
+        android:textColor="@color/font_h1"
+        android:background="@color/tab_bgcolor"/>
+    
+    <ExpandableListView
+        android:id="@+id/bbs_expandablelistview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+    </ExpandableListView>
+
+</LinearLayout>
