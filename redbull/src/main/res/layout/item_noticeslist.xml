@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/img_userphoto"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+      android:layout_margin="@dimen/common_8dp"
+        android:src="@mipmap/defuser_head"
+        />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@+id/img_userphoto"
+        android:text="姓名"
+        android:textColor="#ff00aaee"
+        android:textSize="14sp" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_notices_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_username"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="3dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/font_h1"
+        android:layout_toRightOf="@+id/img_userphoto"
+        android:text="测试"
+        android:textSize="14sp"
+         />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_notices_title"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="3dp"
+        android:layout_toRightOf="@+id/img_userphoto"
+        android:gravity="center_vertical"
+        android:singleLine="true"
+        android:text="测试wwwwwww"
+        android:textColor="@color/font_h2"
+        android:textSize="12sp" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/item_tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/common_8dp"
+        android:layout_marginTop="3dp"
+        android:text="时间差"
+        android:textColor="@color/font_h2"
+        android:textSize="14sp" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/common_8dp"
+        android:src="@drawable/right_go" />
+
+
+
+    <android.support.v7.widget.AppCompatTextView
+
+        android:drawableRight="@mipmap/reply_notices"
+        android:id="@+id/notices_tv_replyc"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_below="@+id/img_userphoto"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="2dp"
+        android:layout_marginRight="@dimen/common_8dp"
+        android:layout_marginTop="3dp"
+        android:gravity="center_vertical"
+        android:text="(3)"
+        android:textColor="@color/font_h2"
+        android:textSize="14sp" />
+
+</RelativeLayout>

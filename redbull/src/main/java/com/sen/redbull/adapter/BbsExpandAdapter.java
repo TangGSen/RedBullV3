@@ -1,6 +1,7 @@
 package com.sen.redbull.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.sen.redbull.R;
+import com.sen.redbull.activity.ActNoticesList;
 import com.sen.redbull.mode.BbsBean;
 import com.sen.redbull.mode.BbsListBean;
 
@@ -61,14 +63,13 @@ public class BbsExpandAdapter extends BaseExpandableListAdapter {
 		bbsDate = bbsListDate.get(groupPosition).getTbztzbbs();
 		map.put(bbsDate.get(childPosition).getId(), bbsDate.get(childPosition).getName());
 		layout.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				/*Intent intent = new Intent(context, NoticesList.class);
+				Intent intent = new Intent(context, ActNoticesList.class);
 				intent.putExtra("bbschildId", arg0.getTag()+"");
 				intent.putExtra("bbschildTitle", map.get(arg0.getTag()));
-				context.startActivity(intent);*/
+				context.startActivity(intent);
 			}
 		});
 		return v;

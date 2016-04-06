@@ -126,7 +126,7 @@ public class FragmentBbs extends BaseFragment {
 		String url = Constants.PATH + Constants.PATH_BBSList;
 		OkHttpUtils.post()
 				.url(url)
-				.addParams("userid", userid)
+				.addParams("user_id", userid)
 				.build()
 				.execute(new Callback<BBSData>() {
 
