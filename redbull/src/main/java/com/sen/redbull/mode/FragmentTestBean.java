@@ -4,7 +4,7 @@ import java.util.List;
 
 public class FragmentTestBean {
 	private String success;
-	private List<ExamBean> ExamList ;
+	private List<ExamItemBean> ExamList ;
 	
 	public String getSuccess() {
 		return success;
@@ -12,10 +12,10 @@ public class FragmentTestBean {
 	public void setSuccess(String success) {
 		this.success = success;
 	}
-	public List<ExamBean> getExamList() {
+	public List<ExamItemBean> getExamList() {
 		return ExamList;
 	}
-	public void setExamList(List<ExamBean> examList) {
+	public void setExamList(List<ExamItemBean> examList) {
 		ExamList = examList;
 	}
 	@Override

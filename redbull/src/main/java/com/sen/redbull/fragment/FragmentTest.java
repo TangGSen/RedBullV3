@@ -1,6 +1,5 @@
 package com.sen.redbull.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,10 +15,11 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.sen.redbull.R;
-import com.sen.redbull.activity.exam.ActExamDetail;
 import com.sen.redbull.adapter.ExamListAdapter;
 import com.sen.redbull.base.BaseFragment;
 import com.sen.redbull.mode.EventSubmitAnswerSucess;
+import com.sen.redbull.mode.ExamItemBean;
+import com.sen.redbull.mode.FragmentTestBean;
 import com.sen.redbull.tools.AcountManager;
 import com.sen.redbull.tools.Constants;
 import com.sen.redbull.tools.DialogUtils;
@@ -49,7 +49,6 @@ public class FragmentTest extends BaseFragment  implements SwipeRefreshLayout.On
     @Bind(R.id.test_swipe_refresh_widget)
     SwipeRefreshLayout swipe_refresh_widget;
 
-
     private static final int GETDATA_ERROR = 0;
     private boolean isLoad = false;
     private boolean isReFlesh = false;
@@ -68,7 +67,7 @@ public class FragmentTest extends BaseFragment  implements SwipeRefreshLayout.On
                     break;
 
                 case 1:
-                    ExamHomeBean homeBean = (ExamHomeBean) msg.obj;
+                    FragmentTestBean homeBean = (FragmentTestBean) msg.obj;
                     // 当返回的数据为空的时候，那么就要显示这个
                     if (homeBean == null) {
                         Toast.makeText(getContext(), "请求数据失败，刷新一下", Toast.LENGTH_SHORT).show();
@@ -111,11 +110,11 @@ public class FragmentTest extends BaseFragment  implements SwipeRefreshLayout.On
         examAdapter.setOnItemClickListener(new ExamListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position, ExamItemBean childItemBean) {
-                Intent intent = new Intent(getActivity(), ActExamDetail.class);
+               /* Intent intent = new Intent(getActivity(), ActExamDetail.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("ExamItemBean", childItemBean);
                 intent.putExtra("ExamItemBeanBundle", bundle);
-                getActivity().startActivity(intent);
+                getActivity().startActivity(intent);*/
             }
         });
 
@@ -193,6 +192,7 @@ public class FragmentTest extends BaseFragment  implements SwipeRefreshLayout.On
             Toast.makeText(getContext(), R.string.has_not_net, Toast.LENGTH_SHORT).show();
             return;
         }
+        Log.e("sen___", AcountManager.getAcountId());
         //下拉刷新和加载更多就不用show
         if (!isReFlesh)
             DialogUtils.showDialog(getActivity(), "请稍等");
@@ -201,18 +201,18 @@ public class FragmentTest extends BaseFragment  implements SwipeRefreshLayout.On
                 .url(url)
                 .addParams("userid", AcountManager.getAcountId())
                 .build()
-                .execute(new Callback<ExamHomeBean>() {
+                .execute(new Callback<FragmentTestBean>() {
                     @Override
                     public void onBefore(Request request) {
                         super.onBefore(request);
                     }
 
                     @Override
-                    public ExamHomeBean parseNetworkResponse(Response response) throws Exception {
+                    public FragmentTestBean parseNetworkResponse(Response response) throws Exception {
 
                         String string = response.body().string();
                         Log.e("sen", string);
-                        ExamHomeBean lesssonBean = JSON.parseObject(string, ExamHomeBean.class);
+                        FragmentTestBean lesssonBean = JSON.parseObject(string, FragmentTestBean.class);
                         return lesssonBean;
                     }
 
@@ -222,7 +222,7 @@ public class FragmentTest extends BaseFragment  implements SwipeRefreshLayout.On
                     }
 
                     @Override
-                    public void onResponse(ExamHomeBean homeBeam) {
+                    public void onResponse(FragmentTestBean homeBeam) {
                         Message message = Message.obtain();
                         message.obj = homeBeam;
                         message.what = 1;

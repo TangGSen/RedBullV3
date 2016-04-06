@@ -31,7 +31,7 @@ public static final String APK_PATH = PATH+"www/view/front/20140504/dcAppAndroid
     public static final String USERINFO = "MobileServer/UserInfo";
     // 传递参数:userId
     // 获得考试：
-    public static final String GETEXAM = "MobileServer/GetExam";
+    public static final String GETEXAM = "MobileServer/getExam";
     // 传递参数:userId
     // 获得试题：
     public static final String PAPERTOPIC = "MobileServer/PaperTopic";

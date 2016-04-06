@@ -69,10 +69,6 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.sen.redbull.activity.exam.ActExamDetail"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
             android:name="com.sen.redbull.activity.study.ActCommentList"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
