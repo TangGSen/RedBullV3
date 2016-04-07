@@ -117,6 +117,20 @@
             android:name=".activity.ActNoticesList"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ActNoticesItemDetail"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ActWriteNotices"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/ActWriteNoteTheme" />
+        <activity
+            android:theme="@style/ActWriteNoteTheme"
+            android:name=".activity.ActWriteReplyNote"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
 
 
         <!-- 下载相关的服务和provider -->

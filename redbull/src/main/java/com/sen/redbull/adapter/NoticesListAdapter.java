@@ -60,6 +60,16 @@ public class NoticesListAdapter extends RecyclerView.Adapter<NoticesListAdapter.
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
+        if (onItemClickListener != null) {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    onItemClickListener.onItemClick(holder.itemView, position, mData.get(position));
+                }
+
+            });
+        }
 
         NoticeItemBean itemBean = mData.get(position);
 

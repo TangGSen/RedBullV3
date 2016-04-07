@@ -18,7 +18,7 @@
         android:layout_marginTop="5dp"
         android:layout_toRightOf="@+id/img_userphoto"
         android:text="姓名"
-        android:textColor="#ff00aaee"
+        android:textColor="@color/user_icon_bg"
         android:textSize="14sp" />
 
     <android.support.v7.widget.AppCompatTextView

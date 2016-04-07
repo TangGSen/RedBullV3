@@ -4,12 +4,12 @@
     android:layout_height="match_parent"
     android:gravity="center_vertical"
     android:orientation="horizontal" 
-    android:background="@color/tab_bgcolor">
+    android:background="@color/resouce_search">
 
     <ImageView
         android:id="@+id/bbs_explistview_imv"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
         android:gravity="center_vertical"
         android:layout_margin="5dp"
         android:background="@mipmap/groupicon" />
@@ -20,6 +20,7 @@
         android:layout_height="50dp"
         android:singleLine="true"
         android:gravity="center_vertical"
+        android:textColor="@color/font_h1"
         android:textSize="16sp"/>
 
 </LinearLayout>

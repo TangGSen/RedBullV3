@@ -150,8 +150,6 @@ public class ActHome extends BaseActivity {
         jumpToMain(2);
     }
 
-
-
     public void jumpToMain(int position){
        if (AcountManager.isAcountExist()){
            Intent intent = new Intent(ActHome.this,MainActivity.class);

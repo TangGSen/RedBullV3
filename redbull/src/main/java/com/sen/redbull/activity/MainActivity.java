@@ -90,14 +90,13 @@ public class MainActivity extends BaseActivity {
         hideAllFragments(transaction);
         switch (position) {
             case 0:
-                if (mFragmentStudy == null) {
-                    // 如果MessageFragment为空，则创建一个并添加到界面上
-                    mFragmentStudy = new FragmentStudy();
-                    transaction.add(R.id.home_layout_content, mFragmentStudy, tabTiles[position]);
+                if (mFragmentRepository == null) {
+                    mFragmentRepository = new FragmentRepository();
+                    transaction.add(R.id.home_layout_content, mFragmentRepository, tabTiles[position]);
                 } else {
-                    // 如果不为空，则直接将它显示出来
-                    transaction.show(mFragmentStudy);
+                    transaction.show(mFragmentRepository);
                 }
+
                 break;
             case 1:
                 if (mFragmentBbs == null) {
@@ -108,11 +107,15 @@ public class MainActivity extends BaseActivity {
                 }
                 break;
             case 2:
-                if (mFragmentRepository == null) {
-                    mFragmentRepository = new FragmentRepository();
-                    transaction.add(R.id.home_layout_content, mFragmentRepository, tabTiles[position]);
+
+
+                if (mFragmentStudy == null) {
+                    // 如果MessageFragment为空，则创建一个并添加到界面上
+                    mFragmentStudy = new FragmentStudy();
+                    transaction.add(R.id.home_layout_content, mFragmentStudy, tabTiles[position]);
                 } else {
-                    transaction.show(mFragmentRepository);
+                    // 如果不为空，则直接将它显示出来
+                    transaction.show(mFragmentStudy);
                 }
                 break;
 

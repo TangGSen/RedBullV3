@@ -168,7 +168,12 @@ public class FragmentBbs extends BaseFragment {
 				});
 			}
 
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		mHandler.removeCallbacksAndMessages(null);
 
+	}
 }
 
 

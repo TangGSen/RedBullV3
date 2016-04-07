@@ -9,6 +9,7 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
@@ -92,10 +93,10 @@ public class ActNoticesList extends BaseActivity {
                     noticesList = homeBeam.getAskList();
 
                     if (noticesList == null) {
-                        Toast.makeText(ActNoticesList.this, "当前没评论", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ActNoticesList.this, "当前没数据", Toast.LENGTH_SHORT).show();
                     }
                     if (noticesList.size() == 0) {
-                        Toast.makeText(ActNoticesList.this, "当前没评论", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ActNoticesList.this, "当前没数据", Toast.LENGTH_SHORT).show();
                     }
                     if (!isLoadMore) {
                         allNoticesList.clear();
@@ -152,6 +153,16 @@ public class ActNoticesList extends BaseActivity {
 
         xRecyclerView.addItemDecoration(new RecyleViewItemDecoration(this, R.drawable.shape_recycle_item_decoration));
         adapter = new NoticesListAdapter(ActNoticesList.this, allNoticesList);
+        adapter.setOnItemClickListener(new NoticesListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position, NoticeItemBean childItemBean) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("NoticeItemBean",childItemBean);
+                Intent intent = new Intent(ActNoticesList.this,ActNoticesItemDetail.class);
+                intent.putExtra("NoticeBundle",bundle);
+                startActivity(intent);
+            }
+        });
         xRecyclerView.setAdapter(adapter);
         swipe_refresh_widget.setLoadMore(true);
         swipe_refresh_widget.setMaterialRefreshListener(new MaterialRefreshListener() {
@@ -201,6 +212,7 @@ public class ActNoticesList extends BaseActivity {
     protected void initData(Bundle savedInstanceState) {
         super.initData(savedInstanceState);
         tv_head_name.setText(bbschildTitle);
+
         if (NetUtil.isNetworkConnected(this)) {
             getCommntList(1);
         } else {
@@ -270,14 +282,9 @@ public class ActNoticesList extends BaseActivity {
 
     @OnClick(R.id.btn_write_common)
     public void clickOnWriteComment() {
-       /* if (!canWrite) {
-            ToastUtils.showTextToast(ActNoticesList.this, "您还没选课,请返回选课后写评论");
-            return;
-        }
-        Intent in = new Intent(this, ActWriteComment.class);
-        in.putExtra("leid", courseId);
-        startActivity(in);*/
-
+        Intent intent = new Intent(ActNoticesList.this, ActWriteNotices.class);
+        intent.putExtra("bbsId", bbschildId);
+        startActivity(intent);
 
     }
 

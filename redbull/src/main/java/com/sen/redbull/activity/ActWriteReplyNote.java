@@ -1,4 +1,4 @@
-package com.sen.redbull.activity.study;
+package com.sen.redbull.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,7 +12,6 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.sen.redbull.R;
 import com.sen.redbull.base.BaseActivity;
-import com.sen.redbull.mode.EventNoThing;
 import com.sen.redbull.mode.EventSubmitComentSucess;
 import com.sen.redbull.tools.AcountManager;
 import com.sen.redbull.tools.Constants;
@@ -29,8 +28,9 @@ import okhttp3.Call;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class ActWriteComment extends BaseActivity {
-    private String courseId;
+public class ActWriteReplyNote extends BaseActivity {
+    private String bbsid;
+    private String askid;
     private String getContext;
 
     @Bind(R.id.write_back)
@@ -39,6 +39,8 @@ public class ActWriteComment extends BaseActivity {
     AppCompatEditText et_content;
     @Bind(R.id.btn_submit)
     AppCompatTextView btn_submit;
+    @Bind(R.id.tv_head_name)
+    AppCompatTextView tv_head_name;
     private static final int ERROR = 0;
     private static final int SHOW_DATA = 1;
 
@@ -49,18 +51,18 @@ public class ActWriteComment extends BaseActivity {
             switch (msg.what) {
                 case 0:
                     setSubmitBtn(true);
-                    Toast.makeText(ActWriteComment.this, "网络异常，请重试", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ActWriteReplyNote.this, "网络异常，请重试", Toast.LENGTH_SHORT).show();
 
                     break;
                 case 1:
-                   boolean isSuccess = (boolean) msg.obj;
-                    if (isSuccess){
-                        Toast.makeText(ActWriteComment.this, "评论成功", Toast.LENGTH_SHORT).show();
+                    boolean isSuccess = (boolean) msg.obj;
+                    if (isSuccess) {
+                        Toast.makeText(ActWriteReplyNote.this, "回复成功，等待审核", Toast.LENGTH_SHORT).show();
                         EventBus.getDefault().post(new EventSubmitComentSucess());
                         finish();
-                    }else{
+                    } else {
                         setSubmitBtn(true);
-                        Toast.makeText(ActWriteComment.this, "评论失败，请重试", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ActWriteReplyNote.this, "回复失败，请重试", Toast.LENGTH_SHORT).show();
                     }
 
                     break;
@@ -71,18 +73,16 @@ public class ActWriteComment extends BaseActivity {
         }
     });
 
+
     @Override
     protected void init() {
         super.init();
         Intent intent = getIntent();
-        courseId = intent.getStringExtra("leid");
+
+        bbsid = intent.getStringExtra("bbsid");
+        askid = intent.getStringExtra("askid");
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
-    }
 
     @Override
     protected void initView(Bundle savedInstanceState) {
@@ -93,8 +93,12 @@ public class ActWriteComment extends BaseActivity {
 
 
     }
-    public void onEvent(EventNoThing event) { //接收方法  在发关事件的线程接收
 
+    @Override
+    protected void initData(Bundle savedInstanceState) {
+        super.initData(savedInstanceState);
+        tv_head_name.setText("回复");
+        et_content.setHint("回复内容");
     }
 
     @OnClick(R.id.write_back)
@@ -108,30 +112,33 @@ public class ActWriteComment extends BaseActivity {
 
         getContext = et_content.getText().toString().trim();
         if (TextUtils.isEmpty(getContext)) {
-            Toast.makeText(ActWriteComment.this, "评论内容不能为空", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ActWriteReplyNote.this, "回复内容不能为空", Toast.LENGTH_SHORT).show();
         } else {
             btn_submit.setEnabled(false);
             submitReview(getContext);
         }
     }
 
-    public void setSubmitBtn(boolean isCan){
+    public void setSubmitBtn(boolean isCan) {
         btn_submit.setEnabled(isCan);
     }
 
     private void submitReview(String context) {
         if (!NetUtil.isNetworkConnected(this)) {
             setSubmitBtn(true);
-            Toast.makeText(ActWriteComment.this, "网络未连接", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ActWriteReplyNote.this, "网络未连接", Toast.LENGTH_SHORT).show();
             return;
         }
-        DialogUtils.showunCancleDialog(ActWriteComment.this,"请稍后");
+        DialogUtils.showunCancleDialog(ActWriteReplyNote.this, "请稍后");
+
         String url = Constants.PATH + Constants.PATH_CourseComments;
         OkHttpUtils.post()
                 .url(url)
-                .addParams("userid",  AcountManager.getAcountId())
-                .addParams("leid", courseId)
-                .addParams("content", context)
+                .addParams("userid", AcountManager.getAcountId())
+                .addParams("flag", "2")
+                .addParams("content", getContext)
+                .addParams("bbsid", bbsid)
+                .addParams("askid", askid)
                 .build()
                 .execute(new Callback<Boolean>() {
                     @Override
@@ -141,7 +148,6 @@ public class ActWriteComment extends BaseActivity {
 
                     @Override
                     public Boolean parseNetworkResponse(Response response) throws Exception {
-
                         String string = response.body().string();
 //                        Log.e("sen", string);
                         Boolean success = JSON.parseObject(string).getBoolean("success");
@@ -157,10 +163,10 @@ public class ActWriteComment extends BaseActivity {
 
                     @Override
                     public void onResponse(Boolean isSuccess) {
-                        Message message =Message.obtain();
+                        Message message = Message.obtain();
                         message.obj = isSuccess;
                         message.what = SHOW_DATA;
-                       mHandler.sendMessage(message);
+                        mHandler.sendMessage(message);
 
                     }
                 });

@@ -14,8 +14,8 @@
 
         <ImageView
             android:id="@+id/bbs_explistview_imv"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
             android:gravity="center_vertical"
             android:layout_margin="5dp"
             android:background="@mipmap/circle" />

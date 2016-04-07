@@ -21,6 +21,12 @@
 
     </style>
 
+    <style name="ActWriteNoteTheme" parent="AppTheme.Base">
+
+        <item name="colorAccent">#AEAEAE</item>
+
+    </style>
+
     <style name="MyCustomerToolbar" parent="Theme.AppCompat.Light">
         <item name="android:textColorPrimary">@color/textActionBarTile</item>
     </style>

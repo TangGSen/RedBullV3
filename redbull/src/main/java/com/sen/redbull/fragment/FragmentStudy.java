@@ -375,6 +375,7 @@ public class FragmentStudy extends BaseFragment implements SwipeRefreshLayout.On
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        mHandler.removeCallbacksAndMessages(null);
         AnimateFirstDisplayListener.displayedImages.clear();
     }
 

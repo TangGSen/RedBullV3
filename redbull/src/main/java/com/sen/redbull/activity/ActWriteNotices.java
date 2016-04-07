@@ -1,4 +1,4 @@
-package com.sen.redbull.activity.study;
+package com.sen.redbull.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,30 +13,32 @@ import com.alibaba.fastjson.JSON;
 import com.sen.redbull.R;
 import com.sen.redbull.base.BaseActivity;
 import com.sen.redbull.mode.EventNoThing;
-import com.sen.redbull.mode.EventSubmitComentSucess;
 import com.sen.redbull.tools.AcountManager;
 import com.sen.redbull.tools.Constants;
 import com.sen.redbull.tools.DialogUtils;
 import com.sen.redbull.tools.NetUtil;
+import com.sen.redbull.tools.ToastUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.Callback;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import de.greenrobot.event.EventBus;
 import okhttp3.Call;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class ActWriteComment extends BaseActivity {
-    private String courseId;
+public class ActWriteNotices extends BaseActivity {
     private String getContext;
+    private String getThemeText;
+    private String bbsid;
 
     @Bind(R.id.write_back)
     AppCompatTextView write_back;
     @Bind(R.id.et_content)
     AppCompatEditText et_content;
+    @Bind(R.id.et_theme)
+    AppCompatEditText et_theme;
     @Bind(R.id.btn_submit)
     AppCompatTextView btn_submit;
     private static final int ERROR = 0;
@@ -49,19 +51,21 @@ public class ActWriteComment extends BaseActivity {
             switch (msg.what) {
                 case 0:
                     setSubmitBtn(true);
-                    Toast.makeText(ActWriteComment.this, "网络异常，请重试", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ActWriteNotices.this, "网络异常，请重试", Toast.LENGTH_SHORT).show();
 
                     break;
                 case 1:
-                   boolean isSuccess = (boolean) msg.obj;
-                    if (isSuccess){
-                        Toast.makeText(ActWriteComment.this, "评论成功", Toast.LENGTH_SHORT).show();
-                        EventBus.getDefault().post(new EventSubmitComentSucess());
+                    boolean isSuccess = (boolean) msg.obj;
+
+                    if (isSuccess) {
+                        ToastUtils.showTextToast(ActWriteNotices.this,"创建成功");
                         finish();
-                    }else{
+                    } else {
                         setSubmitBtn(true);
-                        Toast.makeText(ActWriteComment.this, "评论失败，请重试", Toast.LENGTH_SHORT).show();
+                        ToastUtils.showTextToast(ActWriteNotices.this,"创建失败，请重新创建");
+
                     }
+
 
                     break;
 
@@ -71,28 +75,26 @@ public class ActWriteComment extends BaseActivity {
         }
     });
 
+
+
     @Override
     protected void init() {
         super.init();
         Intent intent = getIntent();
-        courseId = intent.getStringExtra("leid");
+        bbsid = intent.getStringExtra("bbsId");
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
-    }
 
     @Override
     protected void initView(Bundle savedInstanceState) {
         super.initView(savedInstanceState);
-        setContentView(R.layout.activity_write_comment);
+        setContentView(R.layout.actvity_write_notices);
         ButterKnife.bind(this);
         setSubmitBtn(true);
 
 
     }
+
     public void onEvent(EventNoThing event) { //接收方法  在发关事件的线程接收
 
     }
@@ -107,31 +109,39 @@ public class ActWriteComment extends BaseActivity {
     public void submitContent() {
 
         getContext = et_content.getText().toString().trim();
-        if (TextUtils.isEmpty(getContext)) {
-            Toast.makeText(ActWriteComment.this, "评论内容不能为空", Toast.LENGTH_SHORT).show();
-        } else {
+        getThemeText = et_theme.getText().toString().trim();
+        if (TextUtils.isEmpty(getContext) && TextUtils.isEmpty(getThemeText)) {
+            ToastUtils.showTextToast(ActWriteNotices.this, "请输入主题和内容");
+        }else  if (TextUtils.isEmpty(getContext)) {
+            ToastUtils.showTextToast(ActWriteNotices.this, "请输入内容");
+        } else if (TextUtils.isEmpty(getThemeText)) {
+            ToastUtils.showTextToast(ActWriteNotices.this, "请输入主题");
+        }  else {
             btn_submit.setEnabled(false);
-            submitReview(getContext);
+            submitReview(getThemeText,getContext);
         }
     }
 
-    public void setSubmitBtn(boolean isCan){
+    public void setSubmitBtn(boolean isCan) {
         btn_submit.setEnabled(isCan);
     }
 
-    private void submitReview(String context) {
+    private void submitReview(String getThemeText, String context) {
         if (!NetUtil.isNetworkConnected(this)) {
             setSubmitBtn(true);
-            Toast.makeText(ActWriteComment.this, "网络未连接", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ActWriteNotices.this, "网络未连接", Toast.LENGTH_SHORT).show();
             return;
         }
-        DialogUtils.showunCancleDialog(ActWriteComment.this,"请稍后");
-        String url = Constants.PATH + Constants.PATH_CourseComments;
+        DialogUtils.showunCancleDialog(ActWriteNotices.this, "请稍后");
+
+        String url = Constants.PATH + Constants.PATH_UserPosting;
         OkHttpUtils.post()
                 .url(url)
-                .addParams("userid",  AcountManager.getAcountId())
-                .addParams("leid", courseId)
+                .addParams("userid", AcountManager.getAcountId())
+                .addParams("bbsid", bbsid)
+                .addParams("flag", "1")
                 .addParams("content", context)
+                .addParams("title", getThemeText)
                 .build()
                 .execute(new Callback<Boolean>() {
                     @Override
@@ -157,10 +167,10 @@ public class ActWriteComment extends BaseActivity {
 
                     @Override
                     public void onResponse(Boolean isSuccess) {
-                        Message message =Message.obtain();
+                        Message message = Message.obtain();
                         message.obj = isSuccess;
                         message.what = SHOW_DATA;
-                       mHandler.sendMessage(message);
+                        mHandler.sendMessage(message);
 
                     }
                 });
@@ -169,7 +179,6 @@ public class ActWriteComment extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        EventBus.getDefault().unregister(this);
         mHandler.removeCallbacksAndMessages(null);
         super.onDestroy();
 

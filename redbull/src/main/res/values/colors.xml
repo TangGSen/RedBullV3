@@ -25,7 +25,7 @@
     <color name="personal_toobar_bg">#80388E3C</color>
 
     <!--主题颜色-->
-    <color name="theme_color">#DF7480</color>
+    <color name="theme_color">#da0107</color>
     <color name="font_h1">#212121</color>
     <color name="font_h2">#727272</color>
     <color name="resouce_search">#D4D5D9</color>
@@ -39,6 +39,7 @@
     <color name="view_bar_blue">#5480F0</color>
     <color name="all_action_bar">#FFFFFF</color>
     <color name="under_bar_line">#DEDFE0</color>
+    <color name="user_icon_bg">#ff00aaee</color>
 
     <color name="act_home_study">#d37e7e</color>
     <color name="act_home_test">#7b87d1</color>
