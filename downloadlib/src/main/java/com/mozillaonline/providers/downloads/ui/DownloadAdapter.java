@@ -27,6 +27,7 @@ import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -112,10 +113,12 @@ public class DownloadAdapter extends CursorAdapter {
 
 		if (title.length() == 0) {
 			title = mResources.getString(R.string.missing_title);
+		}else{
+			//sen淇敼鐨�
+			String[] titleAndLeid = title.split("_");
+			title = titleAndLeid[0];
 		}
-		//sen淇敼鐨�		
-		//String[] titleAndLeid = title.split("_");
-		
+
 		setTextForView(convertView, R.id.download_title, title);
 		
 		int progress = getProgressValue(totalBytes, currentBytes);

@@ -377,6 +377,7 @@ public class ActStudyDetail extends BaseActivity {
                     public SectionBean parseNetworkResponse(Response response) throws Exception {
 
                         String string = response.body().string();
+                        Log.e("sen",string);
                         SectionBean lesssonBean = JSON.parseObject(string, SectionBean.class);
                         return lesssonBean;
 
