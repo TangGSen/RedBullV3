@@ -34,7 +34,7 @@ public class DownloadUtils {
                     DOWNROOTDIR + "/", courseId + ".mp4");
         }
 
-        request.setTitle(fileName);
+        request.setTitle(fileName+ "_" + courseId);
         request.setShowRunningNotification(false);
 
         long downloadId = mDownloadManager.enqueue(request);
