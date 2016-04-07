@@ -14,7 +14,7 @@ import com.sen.redbull.widget.CustomerDialog;
 import java.io.File;
 
 public class DownloadUtils {
-    private final static String DOWNROOTDIR = "/HaoLiYouDownload";
+    private final static String DOWNROOTDIR = "/RedBullDownload";
 
     public static void downloadFile(Context context, String url, String fileName, String courseId) {
         DownloadManager mDownloadManager = new DownloadManager(context.getContentResolver(), context.getPackageName());
