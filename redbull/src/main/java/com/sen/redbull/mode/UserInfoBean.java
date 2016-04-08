@@ -8,6 +8,7 @@ import java.io.Serializable;
 
 /**
  * Created by Sen on 2016/3/16.
+ * 这个是用户的数据库bean
  */
 @Table(name = "userinfo")
 public class UserInfoBean extends Model implements Serializable {

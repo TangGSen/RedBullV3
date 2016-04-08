@@ -8,6 +8,7 @@ import java.io.Serializable;
 
 /**
  * Created by Administrator on 2016/3/21.
+ * 这个是下载历史的数据库bean
  */
 @Table(name = "downloadhistory")
 public class DownloadFileHistory extends Model implements Serializable {

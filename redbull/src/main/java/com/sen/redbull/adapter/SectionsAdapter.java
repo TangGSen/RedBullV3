@@ -62,7 +62,7 @@ public class SectionsAdapter extends RecyclerView.Adapter<SectionsAdapter.ViewHo
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
-        SectionItemBean itemBean = mData.get(position);
+        final SectionItemBean itemBean = mData.get(position);
 
         holder.text_section_name.setText(itemBean.getSectionname());
 
@@ -72,6 +72,7 @@ public class SectionsAdapter extends RecyclerView.Adapter<SectionsAdapter.ViewHo
             public void onClick(View v) {
                 Intent startPlayIntent = new Intent(mContext, VideoPlayerActivity.class);
                 startPlayIntent.setData(Uri.parse(Constants.PATH_PLAYER + mLessId + "/" +mData.get(position).getSectionurl()));
+                startPlayIntent.putExtra("courseId",itemBean.getId());
                 mContext.startActivity(startPlayIntent);
             }
         });

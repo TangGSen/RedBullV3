@@ -15,6 +15,8 @@ import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatTextView;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
@@ -30,6 +32,8 @@ import android.widget.Toast;
 
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.view.ViewPropertyAnimator;
+import com.sen.redbull.tools.StudyProgressManager;
+import com.sen.redbull.tools.ToastUtils;
 import com.sen.videolib.R;
 
 import java.util.ArrayList;
@@ -41,6 +45,12 @@ import player.VideoView;
 
 
 public class VideoPlayerActivity extends VideoBaseActivity {
+
+    // 计算学时
+    long startTime;
+    long endTime;
+    int useTime;
+
     private VideoView video_view;
     // 顶部控制面板控件
     private LinearLayout ll_top_control;
@@ -144,7 +154,8 @@ public class VideoPlayerActivity extends VideoBaseActivity {
             @Override
             public void onCompletion(MediaPlayer mp) {
               //  btn_play.setBackgroundResource(R.drawable.selector_btn_play);
-                //calculateAndUpload(startTime, endTime);
+                endTime = System.currentTimeMillis();
+                calculateAndUpload(startTime, endTime);
                 Toast.makeText(getApplicationContext(), "视频播放完毕", Toast.LENGTH_SHORT).show();
                 finish();
             }
@@ -200,7 +211,10 @@ public class VideoPlayerActivity extends VideoBaseActivity {
 
         Uri uri = getIntent().getData();
 //        String fileName = getIntent().getStringExtra("courseName");
-//        courseId = getIntent().getStringExtra("courseId");
+        courseId = getIntent().getStringExtra("courseId");
+        if (TextUtils.isEmpty(courseId)){
+            courseId ="";
+        }
         if (uri != null) {
             // 从文件发起的播放请求
 
@@ -244,7 +258,7 @@ public class VideoPlayerActivity extends VideoBaseActivity {
                 // 视频开始播放
                 video_view.start();
 //                btn_play.setBackgroundResource(R.drawable.selector_btn_pause);
-
+                startTime = System.currentTimeMillis();
                 video_seekbar.setMax(video_view.getDuration());
                 tv_duration.setText(StringUtil.formatVideoDuration(video_view
                         .getDuration()));
@@ -260,7 +274,8 @@ public class VideoPlayerActivity extends VideoBaseActivity {
     protected void onPause() {
         if (video_view.isPlaying()) {
             video_view.pause();
-           // calculateAndUpload(startTime, endTime);
+            endTime = System.currentTimeMillis();
+            calculateAndUpload(startTime, endTime);
             handler.removeMessages(MESSAGE_UPDATE_PLAY_PROGRESS);
         }
         super.onPause();
@@ -327,9 +342,12 @@ public class VideoPlayerActivity extends VideoBaseActivity {
             case R.id.btn_play:
                 if (video_view.isPlaying()) {
                     video_view.pause();
+                    endTime = System.currentTimeMillis();
+                    calculateAndUpload(startTime, endTime);
                     handler.removeMessages(MESSAGE_UPDATE_PLAY_PROGRESS);
                 } else {
                     video_view.start();
+                    startTime = System.currentTimeMillis();
                     handler.sendEmptyMessage(MESSAGE_UPDATE_PLAY_PROGRESS);
                 }
                 updatePlayBtnBg();
@@ -469,6 +487,68 @@ public class VideoPlayerActivity extends VideoBaseActivity {
         btn_play.setCompoundDrawables(drawable,null,null,null);
 
     }
+
+    /**
+     * 学习进度更新失败! 学习总时长更新失败! （这两个就要冲重传记录） 该课程不存在，无法记录学时!(既不重传，也不记录)
+     *
+     * @param endTimes
+     * @param startTimes
+     */
+    // 计算并且上传
+    protected void calculateAndUpload(long startTimes, long endTimes) {
+        useTime = (int) ((endTimes - startTimes) / 1000);
+        ToastUtils.showTextToast(VideoPlayerActivity.this,useTime+"");
+        // 小于两秒不提交
+        if (useTime >= 1) {
+            Log.e("sentime",useTime+"看视频时间");
+            int dbTime = StudyProgressManager.getTimeById(courseId);
+            int alltime = useTime +dbTime;
+            Log.e("sentime",alltime+"总时间");
+            StudyProgressManager.insertTimeById(courseId,alltime);
+
+//            try {
+              //  String useTimeString = mDbDao.getStudyProgress(Login.userid,courseId);
+//                if (useTimeString != null) {
+//                    Long useTimes = Long.parseLong(useTimeString);
+//                    useTime += useTimes;
+//                }
+//                String url = Const.PATH + Const.PATH_LEARNINGPROGRESS;
+//                HttpUtils httpUtil = new HttpUtils();
+//                // 设置当前请求的缓存时间
+//                httpUtil.configCurrentHttpCacheExpiry(0);
+//                // 设置默认请求的缓存时间
+//                httpUtil.configDefaultHttpCacheExpiry(0);
+//                // 设置线程数
+//                httpUtil.configRequestThreadPoolSize(1);
+//                RequestParams params = new RequestParams();
+//                params.addQueryStringParameter("userid", Login.userid);
+//                params.addQueryStringParameter("leID", courseId);
+//                params.addQueryStringParameter("learningtimes", useTime + "");
+//                httpUtil.send(HttpRequest.HttpMethod.GET, url, params,
+//                        new RequestCallBack<String>() {
+//                            @Override
+//                            public void onFailure(HttpException arg0,
+//                                                  String arg1) {
+//                                // 如果提交失败的话先存在数据库中
+//                                mDbDao.insertStudyProgress(new StudyProgressBean(
+//                                        Login.userid, courseId, useTime + ""));
+//                            }
+//
+//                            @Override
+//                            public void onSuccess(ResponseInfo<String> res) {
+//                                Log.e("sen", res.result);
+//                                pareseJason(res.result);
+//                            }
+//                        });
+//            } catch (Exception e) {
+//                // 如果提交失败的话先存在数据库中
+//                mDbDao.insertStudyProgress(new StudyProgressBean(Login.userid,
+//                        courseId, useTime + ""));
+            }
+
+
+    }
+
 
 
 
