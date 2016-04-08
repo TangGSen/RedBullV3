@@ -74,9 +74,9 @@ public class MainActivity extends BaseActivity {
             //取出上一次保存的数据
             currentFragPosition = savedInstanceState.getInt(FRAG_POSITION,0);
             Log.e("sen","恢复的状态"+currentFragPosition);
-            mFragmentStudy = (FragmentStudy) mFragmentManager.findFragmentByTag(tabTiles[0]);
+            mFragmentRepository = (FragmentRepository) mFragmentManager.findFragmentByTag(tabTiles[0]);
             mFragmentBbs = (FragmentBbs) mFragmentManager.findFragmentByTag(tabTiles[1]);
-            mFragmentRepository = (FragmentRepository) mFragmentManager.findFragmentByTag(tabTiles[2]);
+            mFragmentStudy = (FragmentStudy) mFragmentManager.findFragmentByTag(tabTiles[2]);
         }
         layout_buttom_tab.getTabAt(currentFragPosition).select();
         setSelectedFragment(currentFragPosition);
