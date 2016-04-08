@@ -1,8 +1,9 @@
 package com.sen.redbull.tools;
 
+import android.util.Log;
+
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
-import com.activeandroid.query.Update;
 import com.sen.redbull.mode.StudyProgressDb;
 
 /**
@@ -38,10 +39,14 @@ public class StudyProgressManager {
                 .executeSingle();
         if (progressDb==null){
             new StudyProgressDb(leid,time).save();
+            Log.e("sen","新建id");
 
         }else{
-            new Update(StudyProgressDb.class).set("lessonid=?," + "time=?", leid, time).execute();
-
+            //谁能告诉我这样为啥不好使？我用错了么
+          // new Update(StudyProgressDb.class).set( "time=?", time).where("lessonid=?" , leid).execute();
+            new Delete().from(StudyProgressDb.class).where("lessonid = ?", leid).execute();
+            new StudyProgressDb(leid,time);
+            Log.e("sen","修改id的time");
         }
 
 

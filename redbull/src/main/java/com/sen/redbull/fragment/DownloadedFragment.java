@@ -329,9 +329,11 @@ public class DownloadedFragment extends Fragment implements
 		 * Intent.FLAG_GRANT_READ_URI_PERMISSION);
 		 */
 	
-//		int column_title_id = mSizeSortedCursor
-//				.getColumnIndexOrThrow(DownloadManager.COLUMN_TITLE);
-//		String title = cursor.getString(column_title_id);
+		int column_title_id = mSizeSortedCursor
+				.getColumnIndexOrThrow(DownloadManager.COLUMN_TITLE);
+		String title = cursor.getString(column_title_id);
+		String[] titleAndLeid = title.split("_");
+
 
 
 		Intent intent = null;
@@ -340,6 +342,7 @@ public class DownloadedFragment extends Fragment implements
 
 
 		intent.setData(localUri);
+		intent.putExtra("courseId",titleAndLeid[1]);
 
 		try {
 			startActivity(intent);

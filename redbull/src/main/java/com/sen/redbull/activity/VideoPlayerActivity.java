@@ -503,8 +503,11 @@ public class VideoPlayerActivity extends VideoBaseActivity {
             Log.e("sentime",useTime+"看视频时间");
             int dbTime = StudyProgressManager.getTimeById(courseId);
             int alltime = useTime +dbTime;
-            Log.e("sentime",alltime+"总时间");
+
             StudyProgressManager.insertTimeById(courseId,alltime);
+            Log.e("sen",alltime+"alltime");
+
+            Log.e("sentime","数据库总时间"+StudyProgressManager.getTimeById(courseId));
 
 //            try {
               //  String useTimeString = mDbDao.getStudyProgress(Login.userid,courseId);

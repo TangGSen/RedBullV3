@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="tabButtonItemName">
-        <item>学习</item>
-        <item>考试</item>
         <item>资源库</item>
+        <item>论坛</item>
+        <item>学习</item>
     </string-array>
 
     <string-array name="resource_arrays">
