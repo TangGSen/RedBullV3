@@ -35,7 +35,7 @@
     <dimen name="common_14sp">14sp</dimen>
     <dimen name="common_14dp">14dp</dimen>
     <dimen name="frist_forn_size_16sp">16sp</dimen>
-    <dimen name="tab_forn_size_18sp">18sp</dimen>
+    <dimen name="tab_forn_size_18sp">16sp</dimen>
     <dimen name="common_42dp">42dp</dimen>
     <dimen name="common_12sp">12sp</dimen>
     <dimen name="common_34dp">34dp</dimen>

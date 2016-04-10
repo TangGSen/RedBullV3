@@ -35,7 +35,7 @@
         <clip>
             <shape>
                 <corners android:radius="5dip" />
-                <solid android:color="#DF7480"/>
+                <solid android:color="#FFFFFF"/>
              <!--   <gradient
                         android:startColor="#ffffd300"
                         android:centerColor="#ffffb600"

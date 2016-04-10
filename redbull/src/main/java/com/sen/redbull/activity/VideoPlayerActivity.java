@@ -13,12 +13,14 @@ import android.media.MediaPlayer.OnInfoListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -30,14 +32,26 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.view.ViewPropertyAnimator;
+import com.sen.redbull.mode.EventNoThing;
+import com.sen.redbull.mode.EventUpateStudyProgress;
+import com.sen.redbull.mode.StudyProgressBean;
+import com.sen.redbull.tools.AcountManager;
+import com.sen.redbull.tools.Constants;
 import com.sen.redbull.tools.StudyProgressManager;
 import com.sen.redbull.tools.ToastUtils;
 import com.sen.videolib.R;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.Callback;
 
 import java.util.ArrayList;
 
+import de.greenrobot.event.EventBus;
+import okhttp3.Call;
+import okhttp3.Request;
+import okhttp3.Response;
 import player.StringUtil;
 import player.VideoBaseActivity;
 import player.VideoItem;
@@ -51,6 +65,9 @@ public class VideoPlayerActivity extends VideoBaseActivity {
     long endTime;
     int useTime;
 
+    private int alltime;
+    private boolean eventBusPost;
+
     private VideoView video_view;
     // 顶部控制面板控件
     private LinearLayout ll_top_control;
@@ -60,7 +77,7 @@ public class VideoPlayerActivity extends VideoBaseActivity {
     private LinearLayout ll_bottom_control;
     private SeekBar video_seekbar;
     private TextView tv_current_progress, tv_duration;
-    private AppCompatTextView btn_exit,btn_play,btn_screen,btn_exit_video;
+    private AppCompatTextView btn_exit, btn_play, btn_screen, btn_exit_video;
     private RelativeLayout ll_loading;
     private LinearLayout ll_buffering;
 
@@ -69,6 +86,8 @@ public class VideoPlayerActivity extends VideoBaseActivity {
     private final int MESSAGE_UPDATE_SYSTEM_TIME = 0;// 更新系统时间
     private final int MESSAGE_UPDATE_PLAY_PROGRESS = 1;// 更新播放进度
     private final int MESSAGE_HIDE_CONTROL = 2;// 延时隐藏控制面板
+
+    private final int STUDY_PROGRESS_RESUTLS = 3;
     private Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
@@ -81,11 +100,37 @@ public class VideoPlayerActivity extends VideoBaseActivity {
                 case MESSAGE_HIDE_CONTROL:
                     hideControlLayout();
                     break;
+                case STUDY_PROGRESS_RESUTLS:
+                    showStudyResoults(msg);
+                    break;
             }
         }
 
         ;
     };
+
+
+    private void showStudyResoults(Message message) {
+        StudyProgressBean progressBean = (StudyProgressBean) message.obj;
+        String msg = progressBean.getMsg();
+        String success = progressBean.getSuccess();
+        if ("true".equals(success) && "学习数据更新成功！".equals(msg)) {
+            ToastUtils.showTextToast(VideoPlayerActivity.this, "更新学分成功");
+        }
+        if ("false".equals(success)) {
+            if (!"学习进度更新失败!".equals(msg) || !"学习总时长更新失败!".equals(msg)
+                    || !"该课程不存在，无法记录学时!".equals(msg)) {
+                // 如果不是这些的话，那么就要删除原来的
+                StudyProgressManager.deleLeidData(AcountManager.getAcountId(), courseId);
+
+            } else if ("学习进度更新失败!".equals(msg) || "学习总时长更新失败!".equals(msg)) {
+                StudyProgressManager.insertTimeById(AcountManager.getAcountId(), courseId, alltime);
+
+            }
+
+        }
+    }
+
     private int screenWidth;
     private int screenHeight;
     private int mTouchSlop;// 滑动的界限值
@@ -99,6 +144,7 @@ public class VideoPlayerActivity extends VideoBaseActivity {
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         setContentView(R.layout.activity_video_player);
         video_view = (VideoView) findViewById(R.id.video_view);
 
@@ -118,6 +164,11 @@ public class VideoPlayerActivity extends VideoBaseActivity {
 
         ll_loading = (RelativeLayout) findViewById(R.id.ll_loading);
         ll_buffering = (LinearLayout) findViewById(R.id.ll_buffering);
+
+    }
+
+    public void onEvent(EventNoThing childItemBean) {
+
 
     }
 
@@ -153,10 +204,14 @@ public class VideoPlayerActivity extends VideoBaseActivity {
         video_view.setOnCompletionListener(new OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-              //  btn_play.setBackgroundResource(R.drawable.selector_btn_play);
+                //  btn_play.setBackgroundResource(R.drawable.selector_btn_play);
                 endTime = System.currentTimeMillis();
                 calculateAndUpload(startTime, endTime);
                 Toast.makeText(getApplicationContext(), "视频播放完毕", Toast.LENGTH_SHORT).show();
+                if (eventBusPost) {
+
+                    EventBus.getDefault().post(new EventUpateStudyProgress());
+                }
                 finish();
             }
         });
@@ -202,7 +257,7 @@ public class VideoPlayerActivity extends VideoBaseActivity {
 
     @Override
     protected void initData() {
-        gestureDetector = new GestureDetector(this,new MyGestureLitener());
+        gestureDetector = new GestureDetector(this, new MyGestureLitener());
         screenWidth = getWindowManager().getDefaultDisplay().getWidth();
         screenHeight = getWindowManager().getDefaultDisplay().getHeight();
         mTouchSlop = ViewConfiguration.getTouchSlop();
@@ -212,8 +267,10 @@ public class VideoPlayerActivity extends VideoBaseActivity {
         Uri uri = getIntent().getData();
 //        String fileName = getIntent().getStringExtra("courseName");
         courseId = getIntent().getStringExtra("courseId");
-        if (TextUtils.isEmpty(courseId)){
-            courseId ="";
+        eventBusPost = getIntent().getBooleanExtra("eventCanPost", false);
+        Log.e("sen",eventBusPost+"");
+        if (TextUtils.isEmpty(courseId)) {
+            courseId = "";
         }
         if (uri != null) {
             // 从文件发起的播放请求
@@ -307,8 +364,6 @@ public class VideoPlayerActivity extends VideoBaseActivity {
     }
 
 
-
-
     /**
      * 注册电量变化的广播接受者
      */
@@ -333,6 +388,10 @@ public class VideoPlayerActivity extends VideoBaseActivity {
                 if (video_view.isPlaying()) {
                     video_view.pause();
                     handler.removeMessages(MESSAGE_UPDATE_PLAY_PROGRESS);
+                }
+                if (eventBusPost) {
+
+                    EventBus.getDefault().post(new EventUpateStudyProgress());
                 }
                 finish();
                 break;
@@ -364,10 +423,10 @@ public class VideoPlayerActivity extends VideoBaseActivity {
      * 更新屏幕按钮的背景图片
      */
     private void updateScreenBtnBg() {
-        Drawable drawable= ContextCompat.getDrawable(this,video_view.isFullScreen() ? R.drawable.btn_fullscreen
+        Drawable drawable = ContextCompat.getDrawable(this, video_view.isFullScreen() ? R.drawable.btn_fullscreen
                 : R.drawable.btn_defualt_screen);
-        drawable.setBounds( 0 ,  0 , drawable.getMinimumWidth(), drawable.getMinimumHeight());
-        btn_screen.setCompoundDrawables(drawable,null,null,null);
+        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+        btn_screen.setCompoundDrawables(drawable, null, null, null);
     }
 
     private float downY;
@@ -385,7 +444,7 @@ public class VideoPlayerActivity extends VideoBaseActivity {
         super.onDestroy();
         handler.removeCallbacksAndMessages(null);
         unregisterReceiver(batteryChangeReceiver);
-
+        EventBus.getDefault().unregister(this);
         getApplication();
         getApplicationContext();
     }
@@ -482,9 +541,9 @@ public class VideoPlayerActivity extends VideoBaseActivity {
      * 更新播放按钮的背景图片
      */
     private void updatePlayBtnBg() {
-        Drawable drawable= ContextCompat.getDrawable(this,video_view.isPlaying() ? R.drawable.btn_pause_video : R.drawable.btn_play_video);
-        drawable.setBounds( 0 ,  0 , drawable.getMinimumWidth(), drawable.getMinimumHeight());
-        btn_play.setCompoundDrawables(drawable,null,null,null);
+        Drawable drawable = ContextCompat.getDrawable(this, video_view.isPlaying() ? R.drawable.btn_pause_video : R.drawable.btn_play_video);
+        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+        btn_play.setCompoundDrawables(drawable, null, null, null);
 
     }
 
@@ -497,62 +556,64 @@ public class VideoPlayerActivity extends VideoBaseActivity {
     // 计算并且上传
     protected void calculateAndUpload(long startTimes, long endTimes) {
         useTime = (int) ((endTimes - startTimes) / 1000);
-        ToastUtils.showTextToast(VideoPlayerActivity.this,useTime+"");
+
         // 小于两秒不提交
         if (useTime >= 1) {
-            Log.e("sentime",useTime+"看视频时间");
-            int dbTime = StudyProgressManager.getTimeById(courseId);
-            int alltime = useTime +dbTime;
+            Log.e("sentime", useTime + "看视频时间");
+            int dbTime = StudyProgressManager.getTimeById(AcountManager.getAcountId(), courseId);
+            alltime = useTime + dbTime;
 
-            StudyProgressManager.insertTimeById(courseId,alltime);
-            Log.e("sen",alltime+"alltime");
+            Log.e("sen", alltime + "alltime");
+            String url = Constants.PATH + Constants.PATH_LEARNINGPROGRESS;
+            OkHttpUtils.post()
+                    .url(url)
+                    .addParams("userid", AcountManager.getAcountId())
+                    .addParams("leID", courseId)
+                    .addParams("learningtimes", alltime + "")
+                    .build()
+                    .execute(new Callback<StudyProgressBean>() {
+                        @Override
+                        public void onBefore(Request request) {
+                            super.onBefore(request);
+                        }
 
-            Log.e("sentime","数据库总时间"+StudyProgressManager.getTimeById(courseId));
+                        @Override
+                        public StudyProgressBean parseNetworkResponse(Response response) throws Exception {
 
-//            try {
-              //  String useTimeString = mDbDao.getStudyProgress(Login.userid,courseId);
-//                if (useTimeString != null) {
-//                    Long useTimes = Long.parseLong(useTimeString);
-//                    useTime += useTimes;
-//                }
-//                String url = Const.PATH + Const.PATH_LEARNINGPROGRESS;
-//                HttpUtils httpUtil = new HttpUtils();
-//                // 设置当前请求的缓存时间
-//                httpUtil.configCurrentHttpCacheExpiry(0);
-//                // 设置默认请求的缓存时间
-//                httpUtil.configDefaultHttpCacheExpiry(0);
-//                // 设置线程数
-//                httpUtil.configRequestThreadPoolSize(1);
-//                RequestParams params = new RequestParams();
-//                params.addQueryStringParameter("userid", Login.userid);
-//                params.addQueryStringParameter("leID", courseId);
-//                params.addQueryStringParameter("learningtimes", useTime + "");
-//                httpUtil.send(HttpRequest.HttpMethod.GET, url, params,
-//                        new RequestCallBack<String>() {
-//                            @Override
-//                            public void onFailure(HttpException arg0,
-//                                                  String arg1) {
-//                                // 如果提交失败的话先存在数据库中
-//                                mDbDao.insertStudyProgress(new StudyProgressBean(
-//                                        Login.userid, courseId, useTime + ""));
-//                            }
-//
-//                            @Override
-//                            public void onSuccess(ResponseInfo<String> res) {
-//                                Log.e("sen", res.result);
-//                                pareseJason(res.result);
-//                            }
-//                        });
-//            } catch (Exception e) {
-//                // 如果提交失败的话先存在数据库中
-//                mDbDao.insertStudyProgress(new StudyProgressBean(Login.userid,
-//                        courseId, useTime + ""));
-            }
+                            String string = response.body().string();
+                            Log.e("sen", string);
+                            StudyProgressBean lesssonBean = JSON.parseObject(string, StudyProgressBean.class);
+                            return lesssonBean;
+                        }
+
+                        @Override
+                        public void onError(Call call, Exception e) {
+                            //网络出错，保存记录
+                            StudyProgressManager.insertTimeById(AcountManager.getAcountId(), courseId, alltime);
+                        }
+
+                        @Override
+                        public void onResponse(StudyProgressBean homeBeam) {
+                            Message message = Message.obtain();
+                            message.obj = homeBeam;
+                            message.what = STUDY_PROGRESS_RESUTLS;
+                            handler.sendMessage(message);
+
+                        }
+                    });
+
+        }
 
 
     }
 
-
-
-
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && eventBusPost) {
+            EventBus.getDefault().post(new EventUpateStudyProgress());
+            finish();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 }

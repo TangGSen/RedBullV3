@@ -16,7 +16,7 @@ import java.io.File;
 public class DownloadUtils {
     private final static String DOWNROOTDIR = "/RedBullDownload";
 
-    public static void downloadFile(Context context, String url, String fileName, String courseId) {
+    public static void downloadFile(Context context, String url, String fileName, String courseId,String setionId) {
         DownloadManager mDownloadManager = new DownloadManager(context.getContentResolver(), context.getPackageName());
         Uri srcUri = Uri.parse(url);
 //		Uri srcUri = Uri.parse("http://dlsw.baidu.com/sw-search-sp/soft/bc/27609/wrar510b4sc.1401936136.exe");
@@ -31,14 +31,14 @@ public class DownloadUtils {
             String downloadDir = Environment.getDataDirectory().getAbsolutePath() + DOWNROOTDIR;
             createDir(downloadDir);
             request.setDestinationInExternalFilesDir(context,
-                    DOWNROOTDIR + "/", courseId + ".mp4");
+                    DOWNROOTDIR + "/", setionId + ".mp4");
         }
 
         request.setTitle(fileName+ "_" + courseId);
         request.setShowRunningNotification(false);
 
         long downloadId = mDownloadManager.enqueue(request);
-        new DownloadFileHistory(fileName,downloadId+"",courseId,url).save();
+        new DownloadFileHistory(fileName,downloadId+"",setionId,url).save();
         BaseDialogCumstorTip.getDefault().showOneBtnDilog(new BaseDialogCumstorTip.DialogButtonOnclickLinster() {
             @Override
             public void onLeftButtonClick(CustomerDialog dialog) {
@@ -71,13 +71,13 @@ public class DownloadUtils {
             return false;
     }
 
-    public static void insterDownload(Context mContext, String url, String sectionname, String id) {
+    public static void insterDownload(Context mContext, String url, String sectionname, String leid,String sectionId) {
        DownloadFileHistory downlodFile = new Select()
                 .from(DownloadFileHistory.class)
-                .where("lessonid = ?", id)
+                .where("lessonid = ?", sectionId)
                 .executeSingle();
         if (downlodFile ==null){
-            downloadFile(mContext,url,sectionname,id);
+            downloadFile(mContext,url,sectionname,leid ,sectionId);
         }else{
             BaseDialogCumstorTip.getDefault().showOneBtnDilog(new BaseDialogCumstorTip.DialogButtonOnclickLinster() {
                 @Override

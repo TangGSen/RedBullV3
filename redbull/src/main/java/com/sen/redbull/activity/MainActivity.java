@@ -66,8 +66,8 @@ public class MainActivity extends BaseActivity {
     protected void initData(Bundle savedInstanceState) {
         super.initData(savedInstanceState);
         tabTiles = ResourcesUtils.getStringArray(this, R.array.tabButtonItemName);
-        tabItemDrawableNormal = new int[]{  R.mipmap.tab_repository_normal, R.mipmap.tab_bbs_normal,R.mipmap.tab_study_normal};
-        tabItemDrawableSelected = new int[]{R.mipmap.tab_repository_selected,R.mipmap.tab_bbs_selected,R.mipmap.tab_study_selected   };
+        tabItemDrawableNormal = new int[]{  R.mipmap.tab_repository_selected, R.mipmap.tab_repository_selected,R.mipmap.tab_repository_selected};
+        tabItemDrawableSelected = new int[]{R.mipmap.tab_repository_selected,R.mipmap.tab_repository_selected,R.mipmap.tab_repository_selected   };
         initTabView();
         mFragmentManager = getSupportFragmentManager();
         if (savedInstanceState != null) {

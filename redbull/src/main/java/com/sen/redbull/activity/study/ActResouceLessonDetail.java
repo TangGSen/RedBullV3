@@ -21,6 +21,7 @@ import com.sen.redbull.adapter.SectionsAdapter;
 import com.sen.redbull.base.BaseActivity;
 import com.sen.redbull.mode.EventComentCountForResouce;
 import com.sen.redbull.mode.EventLoveClickFromRescouce;
+import com.sen.redbull.mode.EventUpateStudyProgress;
 import com.sen.redbull.mode.LessonCommentCounts;
 import com.sen.redbull.mode.LessonCourseDetails;
 import com.sen.redbull.mode.LessonHomeCourseDatails;
@@ -196,6 +197,7 @@ public class ActResouceLessonDetail extends BaseActivity {
             return false;
         }
     });
+    private boolean refleshUpdateProgress;
 
 
     private void showDataOrNot(boolean isShow){
@@ -259,6 +261,13 @@ public class ActResouceLessonDetail extends BaseActivity {
             int count = Integer.parseInt(counts) +event.getSucessCount();
             tv_commons_count.setText("用户评论(" + count + ")");
             counts = count+"";
+        }
+    }
+
+    public void onEvent(EventUpateStudyProgress event) {
+        if ( NetUtil.isNetworkConnected(this)&&tv_course_name!=null && tv_standard_scorce!=null && tv_standard_time!=null && tv_all_time!=null && tv_get_sorce!=null && tv_learn_progress!=null){
+            refleshUpdateProgress = true;
+            getLessonDetail();
         }
     }
     @Override
@@ -352,6 +361,11 @@ public class ActResouceLessonDetail extends BaseActivity {
                         message.obj = detail;
                         message.what = SHOW_LESSDETAIL_DATA;
                         mHandler.sendMessage(message);
+
+                        if (refleshUpdateProgress){
+                            refleshUpdateProgress=false;
+                            return;
+                        }
                         if (!detail.getWhether().equals("0")) {
                             // 然后去请求课程的列表
                             mHandler.sendEmptyMessage(GET_SECTION_DATA);
@@ -554,6 +568,8 @@ public class ActResouceLessonDetail extends BaseActivity {
         String url = Constants.PATH_PLAYER + childItemBean.getLeid() + "/" + setionList.get(postion).getSectionurl();
         Intent startPlayIntent = new Intent(ActResouceLessonDetail.this, VideoPlayerActivity.class);
         startPlayIntent.setData(Uri.parse(url));
+        startPlayIntent.putExtra("courseId",childItemBean.getLeid());
+        startPlayIntent.putExtra("eventCanPost",true);
         startActivity(startPlayIntent);
     }
 

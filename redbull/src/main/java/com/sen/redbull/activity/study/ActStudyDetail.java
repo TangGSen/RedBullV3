@@ -21,6 +21,7 @@ import com.sen.redbull.adapter.SectionsAdapter;
 import com.sen.redbull.base.BaseActivity;
 import com.sen.redbull.mode.EventComentCountForStudy;
 import com.sen.redbull.mode.EventKillPositonStudy;
+import com.sen.redbull.mode.EventUpateStudyProgress;
 import com.sen.redbull.mode.LessonCommentCounts;
 import com.sen.redbull.mode.LessonCourseDetails;
 import com.sen.redbull.mode.LessonHomeCourseDatails;
@@ -175,6 +176,7 @@ public class ActStudyDetail extends BaseActivity {
             return false;
         }
     });
+    private boolean refleshUpdateProgress;
 
     private void showSelecedDialog(String msg, final boolean finish) {
 
@@ -254,6 +256,14 @@ public class ActStudyDetail extends BaseActivity {
             int count = Integer.parseInt(counts) +event.getSucessCount();
             tv_commons_count.setText("用户评论(" + count + ")");
             counts = count+"";
+        }
+    }
+    public void onEvent(EventUpateStudyProgress event) {
+        if ( NetUtil.isNetworkConnected(this)&&tv_course_name!=null && tv_standard_scorce!=null && tv_standard_time!=null && tv_all_time!=null && tv_get_sorce!=null && tv_learn_progress!=null){
+            refleshUpdateProgress = true;
+            Log.e("sen","正在更新进度");
+            getLessonDetail();
+
         }
     }
 
@@ -348,6 +358,10 @@ public class ActStudyDetail extends BaseActivity {
                         message.obj = detail;
                         message.what = SHOW_LESSDETAIL_DATA;
                         mHandler.sendMessage(message);
+                        if (refleshUpdateProgress){
+                            refleshUpdateProgress=false;
+                            return;
+                        }
                         if (!detail.getWhether().equals("0")) {
                             // 然后去请求课程的列表
                             mHandler.sendEmptyMessage(GET_SECTION_DATA);
@@ -355,6 +369,7 @@ public class ActStudyDetail extends BaseActivity {
                         } else {
                             mHandler.sendEmptyMessage(SHOW_UNSELECTED_TIP);
                         }
+
                     }
                 });
 
@@ -416,7 +431,7 @@ public class ActStudyDetail extends BaseActivity {
                     public String parseNetworkResponse(Response response) throws Exception {
 
                         String string = response.body().string();
-                        Log.e("sen*******************", string);
+//                        Log.e("sen*******************", string);
                         LessonCommentCounts commentCounts = JSON.parseObject(string, LessonCommentCounts.class);
                         if (commentCounts.getSuccess().equals("true")) {
                             String counts = commentCounts.getComment();
@@ -529,6 +544,8 @@ public class ActStudyDetail extends BaseActivity {
         String url = Constants.PATH_PLAYER + childItemBean.getLeid() + "/" + setionList.get(postion).getSectionurl();
         Intent startPlayIntent = new Intent(ActStudyDetail.this, VideoPlayerActivity.class);
         startPlayIntent.setData(Uri.parse(url));
+        startPlayIntent.putExtra("courseId",childItemBean.getLeid());
+        startPlayIntent.putExtra("eventCanPost",true);
         startActivity(startPlayIntent);
     }
 

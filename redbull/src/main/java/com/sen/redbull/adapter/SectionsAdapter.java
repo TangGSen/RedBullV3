@@ -72,14 +72,15 @@ public class SectionsAdapter extends RecyclerView.Adapter<SectionsAdapter.ViewHo
             public void onClick(View v) {
                 Intent startPlayIntent = new Intent(mContext, VideoPlayerActivity.class);
                 startPlayIntent.setData(Uri.parse(Constants.PATH_PLAYER + mLessId + "/" +mData.get(position).getSectionurl()));
-                startPlayIntent.putExtra("courseId",itemBean.getId());
+                startPlayIntent.putExtra("courseId",mLessId);
+                startPlayIntent.putExtra("eventCanPost",true);
                 mContext.startActivity(startPlayIntent);
             }
         });
         holder.btn_down.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               DownloadUtils.insterDownload(mContext, Constants.PATH_PLAYER + mLessId + "/" +mData.get(position).getSectionurl(),mData.get(position).getSectionname(),mData.get(position).getId());
+               DownloadUtils.insterDownload(mContext, Constants.PATH_PLAYER + mLessId + "/" +mData.get(position).getSectionurl(),mData.get(position).getSectionname(),mLessId,mData.get(position).getId());
             }
         });
 

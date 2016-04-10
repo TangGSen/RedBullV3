@@ -68,6 +68,8 @@ public static final String APK_PATH = PATH+"www/view/front/20140504/dcAppAndroid
     // 参数1：userid 类型：String 描述：用户ID
     // 参数2：leid 类型：String 描述：课程ID
     // 参数3：flag 类型：String 描述：1.选课操作 2.退课操作
+//学习进度记录
+    public static final String PATH_LEARNINGPROGRESS = "MobileServer/learningProgress";
 
     // 5.资源库
 

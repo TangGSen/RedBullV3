@@ -11,7 +11,7 @@
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:layout_height="48dp"
-        android:background="#000"
+        android:background="#b0000000"
         android:orientation="horizontal" >
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/btn_exit"

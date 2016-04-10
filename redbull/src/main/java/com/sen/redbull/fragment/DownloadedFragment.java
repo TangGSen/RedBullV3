@@ -343,6 +343,7 @@ public class DownloadedFragment extends Fragment implements
 
 		intent.setData(localUri);
 		intent.putExtra("courseId",titleAndLeid[1]);
+		intent.putExtra("eventCanPost",false);
 
 		try {
 			startActivity(intent);

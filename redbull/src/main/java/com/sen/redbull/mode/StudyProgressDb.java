@@ -13,16 +13,27 @@ import java.io.Serializable;
 @Table(name = "studyprogress")
 public class StudyProgressDb extends Model implements Serializable {
 
+    @Column(name = "userid")
+    public String userid;
     @Column(name = "lessonid")
     public String lessonid;
     @Column(name = "time")
     public int time;
+
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
+    }
+
     public StudyProgressDb() {
         super();
     }
 
-    public StudyProgressDb( String lessonid, int time) {
-
+    public StudyProgressDb(String userid, String lessonid, int time) {
+        this.userid = userid;
         this.lessonid = lessonid;
         this.time = time;
     }
