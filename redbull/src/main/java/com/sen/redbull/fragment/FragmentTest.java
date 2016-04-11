@@ -1,5 +1,6 @@
 package com.sen.redbull.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.sen.redbull.R;
+import com.sen.redbull.activity.ActExamTest;
 import com.sen.redbull.adapter.ExamListAdapter;
 import com.sen.redbull.base.BaseFragment;
 import com.sen.redbull.mode.EventSubmitAnswerSucess;
@@ -107,16 +109,6 @@ public class FragmentTest extends BaseFragment  implements SwipeRefreshLayout.On
             examAdapter.notifyDataSetChanged();
         }
 
-        examAdapter.setOnItemClickListener(new ExamListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position, ExamItemBean childItemBean) {
-               /* Intent intent = new Intent(getActivity(), ActExamDetail.class);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("ExamItemBean", childItemBean);
-                intent.putExtra("ExamItemBeanBundle", bundle);
-                getActivity().startActivity(intent);*/
-            }
-        });
 
 
     }
@@ -161,6 +153,20 @@ public class FragmentTest extends BaseFragment  implements SwipeRefreshLayout.On
         test_recylerview.addItemDecoration(new RecyleViewItemDecoration(getContext(), R.drawable.shape_recycle_item_decoration));
         swipe_refresh_widget.setColorSchemeResources(R.color.theme_color,R.color.theme_color);
         swipe_refresh_widget.setOnRefreshListener(this);
+        examItemBeanList = new ArrayList<>();
+        examAdapter = new ExamListAdapter(getActivity(), examItemBeanList);
+        test_recylerview.setAdapter(examAdapter);
+        examAdapter.setOnItemClickListener(new ExamListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position, ExamItemBean childItemBean) {
+                Intent intent = new Intent(getActivity(), ActExamTest.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("ExamItemBean", childItemBean);
+                intent.putExtra("ExamItemBeanBundle", bundle);
+                getActivity().startActivity(intent);
+            }
+        });
+
     }
 
     public void onEvent(EventSubmitAnswerSucess event) {

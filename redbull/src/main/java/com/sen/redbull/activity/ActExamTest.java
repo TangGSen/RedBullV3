@@ -34,12 +34,14 @@ import com.sen.redbull.exam.QuestionList;
 import com.sen.redbull.mode.EventNoThing;
 import com.sen.redbull.mode.EventSubmitAnswerSucess;
 import com.sen.redbull.mode.ExamAnswerJsonBean;
+import com.sen.redbull.mode.ExamItemBean;
 import com.sen.redbull.mode.ExamUserAnswer;
 import com.sen.redbull.tools.AcountManager;
 import com.sen.redbull.tools.Constants;
 import com.sen.redbull.tools.DialogUtils;
 import com.sen.redbull.tools.NetUtil;
 import com.sen.redbull.tools.ResourcesUtils;
+import com.sen.redbull.tools.ToastUtils;
 import com.sen.redbull.widget.BaseDialogCumstorTip;
 import com.sen.redbull.widget.CustomerDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -73,7 +75,6 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
     private static final int SHOW_DATA = 1;
     private static final int SUBMIT_ANSER_DEAL = 3;
     private static final int SUBMIT_ANSER_ERROR = 4;
-    private String examId;
     private GestureDetector detector;
     @Bind(R.id.testing_tv_theme)
     AppCompatTextView testing_tv_theme;
@@ -89,15 +90,15 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
     AppCompatTextView testing_tv_num;
     @Bind(R.id.exam_viewflipper)
     ViewFlipper exam_viewflipper;
-    private String examName;
     //当前的的题号
     private int currentNum;
     //总题数
     private int allQusSize;
+    private ExamItemBean examItemBean;
 
 
     private List<QuestionList> questionLists;
-    private final int viewChaceSize = 3;
+    private final int viewChaceSize = 6;
     private LinkedHashMap<String, View> viewChace = new LinkedHashMap<>();
     private String paperId;
     private Handler mHandler = new Handler(new Handler.Callback() {
@@ -163,6 +164,8 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
         }
     });
 
+
+
     private void showAnserSecess() {
         BaseDialogCumstorTip.getDefault().showOneBtnDilog(new BaseDialogCumstorTip.DialogButtonOnclickLinster() {
             @Override
@@ -189,15 +192,19 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
     protected void init() {
         super.init();
         Intent intent = getIntent();
-        examId = intent.getStringExtra("examId");
-        examName = intent.getStringExtra("examName");
-        if (examName == null) {
-            examName = "";
-        }
-        if (examId == null) {
-            Toast.makeText(ActExamTest.this, "获取试题失败，请重试", Toast.LENGTH_SHORT).show();
+
+        Bundle bundle =intent.getBundleExtra("ExamItemBeanBundle");
+
+        if (bundle ==null) {
+            ToastUtils.showTextToast(this, "出现异常返回重试");
             return;
         }
+        examItemBean = (ExamItemBean) bundle.getSerializable("ExamItemBean");
+        if (examItemBean ==null) {
+            ToastUtils.showTextToast(this, "出现异常返回重试");
+            return;
+        }
+
     }
 
     @Override
@@ -207,8 +214,11 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
         detector = new GestureDetector(ActExamTest.this, this);
         ButterKnife.bind(this);
         settingBtnAble(false);
-        testing_tv_theme.setText(examName);
-
+        if (!TextUtils.isEmpty(examItemBean.getTitle())) {
+            testing_tv_theme.setText(examItemBean.getTitle());
+        }else {
+            testing_tv_theme.setText("考试题");
+        }
     }
 
     private void settingBtnAble(boolean ifCan) {
@@ -226,7 +236,12 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
     }
 
     public void getExamData() {
-        if (!NetUtil.isNetworkConnected(this)) {
+        if(TextUtils.isEmpty(examItemBean.getExamid())){
+            ToastUtils.showTextToast(this, "出现异常返回重试");
+            return;
+        }
+
+        if (!NetUtil.isNetworkConnected(this) ) {
             Toast.makeText(ActExamTest.this, "网络未连接", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -235,7 +250,7 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
         OkHttpUtils.post()
                 .url(url)
                 .addParams("userid", AcountManager.getAcountId())
-                .addParams("examid", examId)
+                .addParams("examid", examItemBean.getExamid())
                 .build()
                 .execute(new Callback<ExamTestHomeBean>() {
                     @Override
@@ -905,7 +920,7 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
         OkHttpUtils.post()
                 .url(url)
                 .addParams("userid", AcountManager.getAcountId())
-                .addParams("examid", examId)
+                .addParams("examid", examItemBean.getExamid())
                 .addParams("paperid", paperId)
                 .addParams("answer", answer)
                 .build()

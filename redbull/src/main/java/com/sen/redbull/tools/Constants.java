@@ -15,7 +15,8 @@ public class Constants {
 
 //    public static final String PATH = "http://121.42.212.192/";
     //ceshi
-    public static final String PATH = "http://192.168.191.1:8080/";
+    public static final String PATH = "http://192.168.50.108:8080/";
+//    public static final String PATH = "http://192.168.191.1:8080/";
 
 //    1.app 更新
 public static final String APK_PATH = PATH+"www/view/front/20140504/dcAppAndroid.html";
