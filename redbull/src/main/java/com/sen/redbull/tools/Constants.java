@@ -15,8 +15,8 @@ public class Constants {
 
 //    public static final String PATH = "http://121.42.212.192/";
     //ceshi
-    public static final String PATH = "http://192.168.50.108:8080/";
-//    public static final String PATH = "http://192.168.191.1:8080/";
+//    public static final String PATH = "http://192.168.50.108:8080/";
+    public static final String PATH = "http://192.168.191.1:8080/";
 
 //    1.app 更新
 public static final String APK_PATH = PATH+"www/view/front/20140504/dcAppAndroid.html";
@@ -127,7 +127,7 @@ public static final String APK_PATH = PATH+"www/view/front/20140504/dcAppAndroid
     // 参数2：user_id 类型：String 描述：用户id
 
     // 12. 发主题或者是回帖
-    public static final String PATH_UserPosting = "MobileServer/UserPosting";
+    public static final String PATH_USER_POSTING = "MobileServer/UserPosting";
     // 参数1：flag 类型：String 描述：1.发主帖 2.回主帖
     // 参数2：userid 类型：String 描述：用户ID
     // 参数3：content 类型：String 描述：发帖或回帖的内容

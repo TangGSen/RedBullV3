@@ -3,6 +3,7 @@
     <string-array name="tabButtonItemName">
         <item>资源库</item>
         <item>论坛</item>
+        <item>考试</item>
         <item>学习</item>
     </string-array>
 

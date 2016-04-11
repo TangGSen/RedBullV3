@@ -134,7 +134,7 @@ public class ActWriteNotices extends BaseActivity {
         }
         DialogUtils.showunCancleDialog(ActWriteNotices.this, "请稍后");
 
-        String url = Constants.PATH + Constants.PATH_UserPosting;
+        String url = Constants.PATH + Constants.PATH_USER_POSTING;
         OkHttpUtils.post()
                 .url(url)
                 .addParams("userid", AcountManager.getAcountId())

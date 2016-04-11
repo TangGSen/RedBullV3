@@ -131,7 +131,7 @@ public class ActWriteReplyNote extends BaseActivity {
         }
         DialogUtils.showunCancleDialog(ActWriteReplyNote.this, "请稍后");
 
-        String url = Constants.PATH + Constants.PATH_CourseComments;
+        String url = Constants.PATH + Constants.PATH_USER_POSTING;
         OkHttpUtils.post()
                 .url(url)
                 .addParams("userid", AcountManager.getAcountId())

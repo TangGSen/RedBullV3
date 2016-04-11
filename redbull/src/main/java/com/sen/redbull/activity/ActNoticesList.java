@@ -19,7 +19,6 @@ import com.sen.redbull.R;
 import com.sen.redbull.adapter.NoticesListAdapter;
 import com.sen.redbull.base.BaseActivity;
 import com.sen.redbull.imgloader.AnimateFirstDisplayListener;
-import com.sen.redbull.mode.CommentHomeBean;
 import com.sen.redbull.mode.NoticeItemBean;
 import com.sen.redbull.mode.NoticeListHomeBean;
 import com.sen.redbull.tools.AcountManager;
@@ -44,7 +43,6 @@ import okhttp3.Response;
 
 public class ActNoticesList extends BaseActivity {
 
-    private CommentHomeBean getLessonCommentListBean;
 
     @Bind(R.id.listview_comment)
     RecyclerView xRecyclerView;
@@ -284,6 +282,7 @@ public class ActNoticesList extends BaseActivity {
     public void clickOnWriteComment() {
         Intent intent = new Intent(ActNoticesList.this, ActWriteNotices.class);
         intent.putExtra("bbsId", bbschildId);
+
         startActivity(intent);
 
     }
