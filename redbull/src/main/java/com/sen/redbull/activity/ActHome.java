@@ -147,7 +147,7 @@ public class ActHome extends BaseActivity {
 
     @OnClick(R.id.imv_learn)
     public void studyPage() {
-        jumpToMain(2);
+        jumpToMain(3);
     }
 
     public void jumpToMain(int position){

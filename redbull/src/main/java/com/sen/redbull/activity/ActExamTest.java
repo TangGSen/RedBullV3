@@ -1,4 +1,4 @@
-package com.sen.redbull.activity.exam;
+package com.sen.redbull.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -42,7 +42,6 @@ import com.sen.redbull.tools.NetUtil;
 import com.sen.redbull.tools.ResourcesUtils;
 import com.sen.redbull.widget.BaseDialogCumstorTip;
 import com.sen.redbull.widget.CustomerDialog;
-import com.tencent.bugly.crashreport.CrashReport;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.Callback;
 

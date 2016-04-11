@@ -18,6 +18,7 @@ import com.sen.redbull.base.BaseActivity;
 import com.sen.redbull.fragment.FragmentBbs;
 import com.sen.redbull.fragment.FragmentRepository;
 import com.sen.redbull.fragment.FragmentStudy;
+import com.sen.redbull.fragment.FragmentTest;
 import com.sen.redbull.tools.ResourcesUtils;
 import com.sen.redbull.tools.ToastUtils;
 
@@ -43,6 +44,7 @@ public class MainActivity extends BaseActivity {
 
     private FragmentStudy mFragmentStudy;
     private FragmentBbs mFragmentBbs;
+    private FragmentTest mFragmentTest;
     private FragmentRepository mFragmentRepository;
 
     private int currentFragPosition = 0;
@@ -51,8 +53,8 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void init() {
         super.init();
-        Intent intent =getIntent();
-        currentFragPosition = intent.getIntExtra("position",0);
+        Intent intent = getIntent();
+        currentFragPosition = intent.getIntExtra("position", 0);
     }
 
     public void initView(Bundle savedInstanceState) {
@@ -66,23 +68,24 @@ public class MainActivity extends BaseActivity {
     protected void initData(Bundle savedInstanceState) {
         super.initData(savedInstanceState);
         tabTiles = ResourcesUtils.getStringArray(this, R.array.tabButtonItemName);
-        tabItemDrawableNormal = new int[]{  R.mipmap.tab_repository_normal, R.mipmap.tab_bbs_normal,R.mipmap.tab_study_normal};
-        tabItemDrawableSelected = new int[]{R.mipmap.tab_repository_selected,R.mipmap.tab_bbs_selected,R.mipmap.tab_study_selected   };
+        tabItemDrawableNormal = new int[]{R.mipmap.tab_repository_normal, R.mipmap.tab_bbs_normal, R.mipmap.tab_exam_normal, R.mipmap.tab_study_normal};
+        tabItemDrawableSelected = new int[]{R.mipmap.tab_repository_selected, R.mipmap.tab_bbs_selected, R.mipmap.tab_exam_seleted, R.mipmap.tab_study_selected};
 
         initTabView();
         mFragmentManager = getSupportFragmentManager();
         if (savedInstanceState != null) {
             //取出上一次保存的数据
-            currentFragPosition = savedInstanceState.getInt(FRAG_POSITION,0);
-            Log.e("sen","恢复的状态"+currentFragPosition);
+            currentFragPosition = savedInstanceState.getInt(FRAG_POSITION, 0);
+            Log.e("sen", "恢复的状态" + currentFragPosition);
             mFragmentRepository = (FragmentRepository) mFragmentManager.findFragmentByTag(tabTiles[0]);
             mFragmentBbs = (FragmentBbs) mFragmentManager.findFragmentByTag(tabTiles[1]);
-            mFragmentStudy = (FragmentStudy) mFragmentManager.findFragmentByTag(tabTiles[2]);
+            mFragmentTest = (FragmentTest) mFragmentManager.findFragmentByTag(tabTiles[2]);
+
+            mFragmentStudy = (FragmentStudy) mFragmentManager.findFragmentByTag(tabTiles[3]);
         }
         layout_buttom_tab.getTabAt(currentFragPosition).select();
         setSelectedFragment(currentFragPosition);
     }
-
 
 
     private void setSelectedFragment(int position) {
@@ -110,6 +113,18 @@ public class MainActivity extends BaseActivity {
             case 2:
 
 
+                if (mFragmentTest == null) {
+                    // 如果MessageFragment为空，则创建一个并添加到界面上
+                    mFragmentTest = new FragmentTest();
+                    transaction.add(R.id.home_layout_content, mFragmentTest, tabTiles[position]);
+                } else {
+                    // 如果不为空，则直接将它显示出来
+                    transaction.show(mFragmentTest);
+                }
+                break;
+            case 3:
+
+
                 if (mFragmentStudy == null) {
                     // 如果MessageFragment为空，则创建一个并添加到界面上
                     mFragmentStudy = new FragmentStudy();
@@ -132,6 +147,9 @@ public class MainActivity extends BaseActivity {
         if (mFragmentBbs != null) {
             transaction.hide(mFragmentBbs);
         }
+        if (mFragmentTest != null) {
+            transaction.hide(mFragmentTest);
+        }
         if (mFragmentRepository != null) {
             transaction.hide(mFragmentRepository);
         }
@@ -142,11 +160,10 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         //保存tab选中的状态
-        Log.e("sen","保存tab选中的状态"+currentFragPosition);
+        Log.e("sen", "保存tab选中的状态" + currentFragPosition);
         outState.putInt(FRAG_POSITION, currentFragPosition);
         super.onSaveInstanceState(outState);
     }
-
 
 
     private void initTabView() {
@@ -220,16 +237,15 @@ public class MainActivity extends BaseActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if((System.currentTimeMillis()-exitTime) >2000)  {
-                ToastUtils.showTextToast(MainActivity.this,ResourcesUtils.getResString(MainActivity.this,R.string.two_down_back_exitapp));
+            if ((System.currentTimeMillis() - exitTime) > 2000) {
+                ToastUtils.showTextToast(MainActivity.this, ResourcesUtils.getResString(MainActivity.this, R.string.two_down_back_exitapp));
                 exitTime = System.currentTimeMillis();
-            }else {
+            } else {
                 exitApp();
             }
         }
         return true;
     }
-
 
 
 }
