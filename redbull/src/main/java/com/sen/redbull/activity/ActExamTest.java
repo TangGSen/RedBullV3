@@ -113,9 +113,9 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
                 case 1:
                     Log.e("sen","5555555");
                     ExamTestHomeBean homeBeam = (ExamTestHomeBean) msg.obj;
-//                    paperId = homeBeam.getPaper().getId();
+                    paperId = homeBeam.getPaper().getId();
                     questionLists = homeBeam.getQuestionList();
-//                    totalScore= homeBeam.getPaper().getTotalScore()+"";
+                    totalScore= homeBeam.getPaper().getTotalScore()+"";
                     if (questionLists == null) {
                         Toast.makeText(ActExamTest.this, "获取试卷数据失败，请重试", Toast.LENGTH_SHORT).show();
                         return false;
