@@ -105,6 +105,16 @@ public class FragmentTest extends BaseFragment  implements SwipeRefreshLayout.On
         if (examAdapter == null) {
             examAdapter = new ExamListAdapter(getActivity(), examItemBeanList);
             test_recylerview.setAdapter(examAdapter);
+            examAdapter.setOnItemClickListener(new ExamListAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position, ExamItemBean childItemBean) {
+                    Intent intent = new Intent(getActivity(), ActExamTest.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("ExamItemBean", childItemBean);
+                    intent.putExtra("ExamItemBeanBundle", bundle);
+                    getActivity().startActivity(intent);
+                }
+            });
         } else {
             examAdapter.notifyDataSetChanged();
         }
@@ -153,19 +163,8 @@ public class FragmentTest extends BaseFragment  implements SwipeRefreshLayout.On
         test_recylerview.addItemDecoration(new RecyleViewItemDecoration(getContext(), R.drawable.shape_recycle_item_decoration));
         swipe_refresh_widget.setColorSchemeResources(R.color.theme_color,R.color.theme_color);
         swipe_refresh_widget.setOnRefreshListener(this);
-        examItemBeanList = new ArrayList<>();
-        examAdapter = new ExamListAdapter(getActivity(), examItemBeanList);
-        test_recylerview.setAdapter(examAdapter);
-        examAdapter.setOnItemClickListener(new ExamListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position, ExamItemBean childItemBean) {
-                Intent intent = new Intent(getActivity(), ActExamTest.class);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("ExamItemBean", childItemBean);
-                intent.putExtra("ExamItemBeanBundle", bundle);
-                getActivity().startActivity(intent);
-            }
-        });
+        allExamItemBeanList = new ArrayList<>();
+
 
     }
 
@@ -181,7 +180,6 @@ public class FragmentTest extends BaseFragment  implements SwipeRefreshLayout.On
 
     @Override
     protected void initData() {
-        allExamItemBeanList = new ArrayList<>();
         if (isLoad) {
             getExamListData();
         }

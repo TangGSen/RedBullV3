@@ -146,8 +146,12 @@ public static final String APK_PATH = PATH+"www/view/front/20140504/dcAppAndroid
     // 参数1：jobid 类型：String 描述:职种ID
 
     // 4.获取试题
-    public static final String PATH_ENTEREXAM = "MobileServer/EnterExam";
-    public static final String PATH_SUBMITEXAM = "MobileServer/SubmitExam";
+
+    public static final String PATH_PAPERTOPIC = "MobileServer/PaperTopic";
+
+    // 答题后提交
+    public static final String UPDATE_EXAM_RESULT = "MobileServer/UpdateExamResult";
+    // 传递参数:userId、examId（考试Id） 、mark（答题分数） ，beginDate（开始考试时间）
 
 
 

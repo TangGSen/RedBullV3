@@ -1,5 +1,7 @@
 package com.sen.redbull.exam;
 
+import com.sen.redbull.mode.Paper;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -8,16 +10,17 @@ public class ExamTestHomeBean implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String paperid;
+	private Paper paper;
 	private List<QuestionList> questionList;
 	private String success;
 
-	public String getPaperid() {
-		return paperid;
+
+	public Paper getPaper() {
+		return paper;
 	}
 
-	public void setPaperid(String paperid) {
-		this.paperid = paperid;
+	public void setPaper(Paper paper) {
+		this.paper = paper;
 	}
 
 	public List<QuestionList> getQuestionList() {

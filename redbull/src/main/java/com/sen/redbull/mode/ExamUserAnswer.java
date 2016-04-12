@@ -8,12 +8,32 @@ import java.io.Serializable;
 public class ExamUserAnswer implements Serializable {
     private String id;
     private String answer;
+    private String realAnswer;
+    private float score;
     private String type;
 
-    public ExamUserAnswer(String id,String answer,String type){
+    public String getRealAnswer() {
+        return realAnswer;
+    }
+
+    public void setRealAnswer(String realAnswer) {
+        this.realAnswer = realAnswer;
+    }
+
+    public float getScore() {
+        return score;
+    }
+
+    public void setScore(float score) {
+        this.score = score;
+    }
+
+    public ExamUserAnswer(String id, String answer, String realAnswer, float score, String type){
         this.id = id;
         this.answer = answer;
         this.type = type;
+        this.realAnswer = realAnswer;
+        this.score = score;
     }
 
     public String getAnswer() {

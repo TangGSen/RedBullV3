@@ -33,7 +33,6 @@ import com.sen.redbull.exam.ExamTestHomeBean;
 import com.sen.redbull.exam.QuestionList;
 import com.sen.redbull.mode.EventNoThing;
 import com.sen.redbull.mode.EventSubmitAnswerSucess;
-import com.sen.redbull.mode.ExamAnswerJsonBean;
 import com.sen.redbull.mode.ExamItemBean;
 import com.sen.redbull.mode.ExamUserAnswer;
 import com.sen.redbull.tools.AcountManager;
@@ -47,7 +46,8 @@ import com.sen.redbull.widget.CustomerDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.Callback;
 
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -94,8 +94,9 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
     private int currentNum;
     //总题数
     private int allQusSize;
+    private String enterTime;
     private ExamItemBean examItemBean;
-
+    private String totalScore;
 
     private List<QuestionList> questionLists;
     private final int viewChaceSize = 6;
@@ -106,14 +107,15 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-
+                Log.e("sen","网络异常");
                     Toast.makeText(ActExamTest.this, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
                     break;
                 case 1:
-
+                    Log.e("sen","5555555");
                     ExamTestHomeBean homeBeam = (ExamTestHomeBean) msg.obj;
-                    paperId = homeBeam.getPaperid();
+//                    paperId = homeBeam.getPaper().getId();
                     questionLists = homeBeam.getQuestionList();
+//                    totalScore= homeBeam.getPaper().getTotalScore()+"";
                     if (questionLists == null) {
                         Toast.makeText(ActExamTest.this, "获取试卷数据失败，请重试", Toast.LENGTH_SHORT).show();
                         return false;
@@ -124,13 +126,16 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
                         return false;
                     }
                     settingBtnAble(true);
+                    long enter = System.currentTimeMillis();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    enterTime = sdf.format(new Date(enter));
                     showExamQuestion();
 
                     break;
 
                 case 2:
-                    String json = (String) msg.obj;
-                    submitUserAnswer(json);
+                    float sroce = (float) msg.obj;
+                    submitUserAnswer(sroce);
                     break;
                 case 3:
                     Boolean isSesscess = (Boolean) msg.obj;
@@ -246,11 +251,10 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
             return;
         }
         DialogUtils.showunCancleDialog(this,"请稍后");
-        String url = Constants.PATH + Constants.PATH_ENTEREXAM;
+        String url = Constants.PATH + Constants.PATH_PAPERTOPIC;
         OkHttpUtils.post()
                 .url(url)
-                .addParams("userid", AcountManager.getAcountId())
-                .addParams("examid", examItemBean.getExamid())
+                .addParams("examId", examItemBean.getExamid())
                 .build()
                 .execute(new Callback<ExamTestHomeBean>() {
                     @Override
@@ -262,7 +266,7 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
                     public ExamTestHomeBean parseNetworkResponse(Response response) throws Exception {
 
                         String string = response.body().string();
-                        Log.e("sen", string);
+                        Log.e("sen_____", string);
                         ExamTestHomeBean lesssonBean = JSON.parseObject(string, ExamTestHomeBean.class);
                         return lesssonBean;
                     }
@@ -561,14 +565,19 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
         }
     }
 
-    private void addToAnswer(int currentNum, String answer) {
+    /**
+     * 保存用户的答案，这里需要注意的是，红牛的没有简答，填空，那么在遍历用户答案和真实的答案的时候可以这样来做
+
+     */
+    private void addToAnswer(int currentNum,  String answer) {
         QuestionList question = questionLists.get(currentNum);
         String key = question.getId();
         if (answerMap.containsKey(key)) {
             ExamUserAnswer userAnswer = answerMap.get(key);
             userAnswer.setAnswer(answer);
+
         } else {
-            answerMap.put(key, new ExamUserAnswer(key, answer, question.getType()));
+            answerMap.put(key, new ExamUserAnswer(key, answer,question.getSuccessanswer(),question.getScore(), question.getType()));
         }
 
     }
@@ -604,7 +613,7 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
                             buffer.append(mMutilChoose[j]);
                         }
                     }
-                    addToAnswer(currentNum, buffer.toString());
+                    addToAnswer(currentNum,  buffer.toString());
                 }
             });
         }
@@ -736,7 +745,6 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
 
     @Override
     public boolean onScroll(MotionEvent arg0, MotionEvent arg1, float arg2, float arg3) {
-        Log.e("sen", arg2 + "————————" + arg3);
         return false;
     }
 
@@ -884,23 +892,19 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
             @Override
             public void run() {
                 super.run();
-                ExamAnswerJsonBean jsonBean = new ExamAnswerJsonBean();
-                List<ExamUserAnswer> examUserAnswers = new ArrayList<>();
                 // 遍历出用户的答案
+                float allScore =-1;
                 for (Map.Entry<String, ExamUserAnswer> answerEntry : answerMap.entrySet()) {
                     String keyId = answerEntry.getKey();
                     ExamUserAnswer whichAnswer = answerEntry.getValue();
                     if (whichAnswer != null) {
-                        examUserAnswers.add(whichAnswer);
+                        if (whichAnswer.getRealAnswer().equals(whichAnswer.getAnswer()))
+                           allScore += whichAnswer.getScore();
+                        Log.e("sen","用户答案："+whichAnswer.getAnswer()+"__"+"正式"+whichAnswer.getRealAnswer()+"分数"+whichAnswer.getScore());
                     }
                 }
-
-                jsonBean.setAnswer(examUserAnswers);
-
-                String jsonString = JSON.toJSONString(jsonBean);
-                Log.e("sen", jsonString);
                 Message message = Message.obtain();
-                message.obj = jsonString;
+                message.obj = allScore;
                 message.what = SUBMIT_ANSWER_DATA;
                 mHandler.sendMessage(message);
 
@@ -909,20 +913,24 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
     }
 
 
-    public void submitUserAnswer(String answer) {
+    public void submitUserAnswer(float answer) {
         if (!NetUtil.isNetworkConnected(this)) {
             DialogUtils.closeUnCancleDialog();
             setSubmitTestBtn(true);
             Toast.makeText(ActExamTest.this, "网络未连接", Toast.LENGTH_SHORT).show();
             return;
         }
-        String url = Constants.PATH + Constants.PATH_SUBMITEXAM;
+
+
+        String url = Constants.PATH + Constants.UPDATE_EXAM_RESULT;
         OkHttpUtils.post()
                 .url(url)
-                .addParams("userid", AcountManager.getAcountId())
-                .addParams("examid", examItemBean.getExamid())
-                .addParams("paperid", paperId)
-                .addParams("answer", answer)
+                .addParams("userId", AcountManager.getAcountId())
+                .addParams("examId", examItemBean.getExamid())
+                .addParams("mark", answer+"")
+                .addParams("paperId", paperId)
+                .addParams("beginDate", enterTime)
+                .addParams("FULL_MARK", totalScore)
                 .build()
                 .execute(new Callback<Boolean>() {
                     @Override
