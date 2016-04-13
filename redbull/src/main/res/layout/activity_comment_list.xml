@@ -29,14 +29,14 @@
             android:textSize="@dimen/tab_forn_size_18sp" />
 
 
-        <android.support.v7.widget.AppCompatImageButton
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/btn_write_common"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="@dimen/common_38dp"
+            android:layout_height="@dimen/common_38dp"
             android:layout_centerVertical="true"
             android:layout_gravity="right|center_vertical"
             android:layout_marginRight="@dimen/common_16dp"
-            android:background="@mipmap/write_comment"
+            android:drawableRight="@mipmap/write_comment"
             android:gravity="center_vertical" />
 
     </android.support.v7.widget.Toolbar>

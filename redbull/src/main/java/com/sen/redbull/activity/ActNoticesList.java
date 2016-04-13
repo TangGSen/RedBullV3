@@ -1,10 +1,10 @@
 package com.sen.redbull.activity;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,6 +25,7 @@ import com.sen.redbull.tools.AcountManager;
 import com.sen.redbull.tools.Constants;
 import com.sen.redbull.tools.DialogUtils;
 import com.sen.redbull.tools.NetUtil;
+import com.sen.redbull.tools.ResourcesUtils;
 import com.sen.redbull.tools.ToastUtils;
 import com.sen.redbull.widget.RecyleViewItemDecoration;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -52,7 +53,7 @@ public class ActNoticesList extends BaseActivity {
     @Bind(R.id.tv_head_name)
     AppCompatTextView tv_head_name;
     @Bind(R.id.btn_write_common)
-    AppCompatImageButton btn_write_common;
+    AppCompatTextView btn_write_common;
 
     @Bind(R.id.comment_refresh_widget)
     MaterialRefreshLayout swipe_refresh_widget;
@@ -137,6 +138,10 @@ public class ActNoticesList extends BaseActivity {
         super.initView(savedInstanceState);
         setContentView(R.layout.activity_comment_list);
         ButterKnife.bind(this);
+        Drawable drawable=ResourcesUtils.getResDrawable(ActNoticesList.this,R.mipmap.bbs);
+/// 这一步必须要做,否则不会显示.
+        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+        btn_write_common.setCompoundDrawables(null,null,drawable,null);
         settingRecyleView();
 
     }

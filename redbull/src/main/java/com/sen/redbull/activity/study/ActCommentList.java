@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -57,7 +56,7 @@ public class ActCommentList extends BaseActivity  {
     @Bind(R.id.common_back)
     AppCompatTextView common_back;
     @Bind(R.id.btn_write_common)
-    AppCompatImageButton btn_write_common;
+    AppCompatTextView btn_write_common;
 
     @Bind(R.id.comment_refresh_widget)
     MaterialRefreshLayout swipe_refresh_widget;
