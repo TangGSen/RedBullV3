@@ -28,8 +28,8 @@
             android:layout_marginLeft="5dp"
             android:gravity="center_vertical"
             android:text="姓名"
-            android:textColor="@color/user_common_name"
-            android:textSize="@dimen/fragment_font_16sp" />
+            android:textColor="@color/user_icon_bg"
+            android:textSize="@dimen/common_14sp" />
 
         <android.support.v7.widget.AppCompatTextView
             android:layout_marginTop="@dimen/frgment_login_8dp"

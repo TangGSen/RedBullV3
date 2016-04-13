@@ -75,6 +75,7 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
     private static final int SHOW_DATA = 1;
     private static final int SUBMIT_ANSER_DEAL = 3;
     private static final int SUBMIT_ANSER_ERROR = 4;
+    private static final int SHOW_SUBMIT_ABLE_NOTNET = 7;
     private GestureDetector detector;
     @Bind(R.id.testing_tv_theme)
     AppCompatTextView testing_tv_theme;
@@ -107,15 +108,15 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                Log.e("sen","网络异常");
+
                     Toast.makeText(ActExamTest.this, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
                     break;
                 case 1:
-                    Log.e("sen","5555555");
+
                     ExamTestHomeBean homeBeam = (ExamTestHomeBean) msg.obj;
                     paperId = homeBeam.getPaper().getId();
                     questionLists = homeBeam.getQuestionList();
-                    totalScore= homeBeam.getPaper().getTotalScore()+"";
+                    totalScore = homeBeam.getPaper().getTotalScore() + "";
                     if (questionLists == null) {
                         Toast.makeText(ActExamTest.this, "获取试卷数据失败，请重试", Toast.LENGTH_SHORT).show();
                         return false;
@@ -135,7 +136,8 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
 
                 case 2:
                     float sroce = (float) msg.obj;
-                    submitUserAnswer(sroce);
+                    showDialogUserResult(sroce);
+
                     break;
                 case 3:
                     Boolean isSesscess = (Boolean) msg.obj;
@@ -162,6 +164,10 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
                 case 6:
                     showNextQuestion();
                     break;
+                case 7:
+                    setSubmitTestBtn(true);
+                    Toast.makeText(ActExamTest.this, "网络未连接,请联网重新交卷", Toast.LENGTH_SHORT).show();
+                    break;
             }
             DialogUtils.closeDialog();
             DialogUtils.closeUnCancleDialog();
@@ -169,6 +175,28 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
         }
     });
 
+
+    //显示用户的分数
+    private void showDialogUserResult(final float sroce) {
+        BaseDialogCumstorTip.getDefault().showOneBtnDilog(new BaseDialogCumstorTip.DialogButtonOnclickLinster() {
+            @Override
+            public void onLeftButtonClick(CustomerDialog dialog) {
+                if (!NetUtil.isNetworkConnected(ActExamTest.this)) {
+                    //把按钮可点击
+                    mHandler.sendEmptyMessage(SHOW_SUBMIT_ABLE_NOTNET);
+                    dialog.dismiss();
+                } else {
+                    submitUserAnswer(sroce);
+                }
+
+            }
+
+            @Override
+            public void onRigthButtonClick(CustomerDialog dialog) {
+
+            }
+        }, 260, 160, ActExamTest.this, "提交提示", "您的得分为:" + sroce, "提交", true, true);
+    }
 
 
     private void showAnserSecess() {
@@ -183,7 +211,7 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
             public void onRigthButtonClick(CustomerDialog dialog) {
 
             }
-        }, 260, 160, ActExamTest.this, "提交成功", "待考试成绩公布后，您可去PC端查看!", "确定", true, true);
+        }, 260, 160, ActExamTest.this, "提交成功", "", "确定", true, true);
 
     }
 
@@ -198,14 +226,14 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
         super.init();
         Intent intent = getIntent();
 
-        Bundle bundle =intent.getBundleExtra("ExamItemBeanBundle");
+        Bundle bundle = intent.getBundleExtra("ExamItemBeanBundle");
 
-        if (bundle ==null) {
+        if (bundle == null) {
             ToastUtils.showTextToast(this, "出现异常返回重试");
             return;
         }
         examItemBean = (ExamItemBean) bundle.getSerializable("ExamItemBean");
-        if (examItemBean ==null) {
+        if (examItemBean == null) {
             ToastUtils.showTextToast(this, "出现异常返回重试");
             return;
         }
@@ -221,7 +249,7 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
         settingBtnAble(false);
         if (!TextUtils.isEmpty(examItemBean.getTitle())) {
             testing_tv_theme.setText(examItemBean.getTitle());
-        }else {
+        } else {
             testing_tv_theme.setText("考试题");
         }
     }
@@ -241,16 +269,16 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
     }
 
     public void getExamData() {
-        if(TextUtils.isEmpty(examItemBean.getExamid())){
+        if (TextUtils.isEmpty(examItemBean.getExamid())) {
             ToastUtils.showTextToast(this, "出现异常返回重试");
             return;
         }
 
-        if (!NetUtil.isNetworkConnected(this) ) {
+        if (!NetUtil.isNetworkConnected(this)) {
             Toast.makeText(ActExamTest.this, "网络未连接", Toast.LENGTH_SHORT).show();
             return;
         }
-        DialogUtils.showunCancleDialog(this,"请稍后");
+        DialogUtils.showunCancleDialog(this, "请稍后");
         String url = Constants.PATH + Constants.PATH_PAPERTOPIC;
         OkHttpUtils.post()
                 .url(url)
@@ -266,7 +294,7 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
                     public ExamTestHomeBean parseNetworkResponse(Response response) throws Exception {
 
                         String string = response.body().string();
-                        Log.e("sen_____", string);
+
                         ExamTestHomeBean lesssonBean = JSON.parseObject(string, ExamTestHomeBean.class);
                         return lesssonBean;
                     }
@@ -516,7 +544,7 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
                             public void onRigthButtonClick(CustomerDialog dialog) {
 
                             }
-                        },260,160, ActExamTest.this,"温馨提示",ResourcesUtils.getResString(ActExamTest.this,R.string.test_input_error),"确定",true,true);
+                        }, 260, 160, ActExamTest.this, "温馨提示", ResourcesUtils.getResString(ActExamTest.this, R.string.test_input_error), "确定", true, true);
 
                     }
                 }
@@ -567,9 +595,8 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
 
     /**
      * 保存用户的答案，这里需要注意的是，红牛的没有简答，填空，那么在遍历用户答案和真实的答案的时候可以这样来做
-
      */
-    private void addToAnswer(int currentNum,  String answer) {
+    private void addToAnswer(int currentNum, String answer) {
         QuestionList question = questionLists.get(currentNum);
         String key = question.getId();
         if (answerMap.containsKey(key)) {
@@ -577,7 +604,7 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
             userAnswer.setAnswer(answer);
 
         } else {
-            answerMap.put(key, new ExamUserAnswer(key, answer,question.getSuccessanswer(),question.getScore(), question.getType()));
+            answerMap.put(key, new ExamUserAnswer(key, answer, question.getSuccessanswer(), question.getScore(), question.getType()));
         }
 
     }
@@ -613,7 +640,7 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
                             buffer.append(mMutilChoose[j]);
                         }
                     }
-                    addToAnswer(currentNum,  buffer.toString());
+                    addToAnswer(currentNum, buffer.toString());
                 }
             });
         }
@@ -633,7 +660,6 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
             exam_viewflipper.showNext();
         }
     }
-
 
 
     private void showPreQuestion() {
@@ -893,14 +919,13 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
             public void run() {
                 super.run();
                 // 遍历出用户的答案
-                float allScore =-1;
+                float allScore = 0;
                 for (Map.Entry<String, ExamUserAnswer> answerEntry : answerMap.entrySet()) {
                     String keyId = answerEntry.getKey();
                     ExamUserAnswer whichAnswer = answerEntry.getValue();
                     if (whichAnswer != null) {
                         if (whichAnswer.getRealAnswer().equals(whichAnswer.getAnswer()))
-                           allScore += whichAnswer.getScore();
-                        Log.e("sen","用户答案："+whichAnswer.getAnswer()+"__"+"正式"+whichAnswer.getRealAnswer()+"分数"+whichAnswer.getScore());
+                            allScore += whichAnswer.getScore();
                     }
                 }
                 Message message = Message.obtain();
@@ -914,6 +939,7 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
 
 
     public void submitUserAnswer(float answer) {
+
         if (!NetUtil.isNetworkConnected(this)) {
             DialogUtils.closeUnCancleDialog();
             setSubmitTestBtn(true);
@@ -927,7 +953,7 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
                 .url(url)
                 .addParams("userId", AcountManager.getAcountId())
                 .addParams("examId", examItemBean.getExamid())
-                .addParams("mark", answer+"")
+                .addParams("mark", answer + "")
                 .addParams("paperId", paperId)
                 .addParams("beginDate", enterTime)
                 .addParams("FULL_MARK", totalScore)
