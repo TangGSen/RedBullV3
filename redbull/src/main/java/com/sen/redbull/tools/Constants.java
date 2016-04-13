@@ -5,7 +5,7 @@ package com.sen.redbull.tools;
  */
 public class Constants {
     //腾讯 bugly
-    public static final String APPID= "";
+    public static final String APPID= "900025731";
 
     //接口
 

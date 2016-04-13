@@ -57,21 +57,9 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      */
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
-        if ( mDefaultHandler != null) {
-            //如果用户没有处理则让系统默认的异常处理器来处理
-            mDefaultHandler.uncaughtException(thread, ex);
             //退出程序
             android.os.Process.killProcess(android.os.Process.myPid());
             System.exit(1);
-        } else {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-            }
-            //退出程序
-            android.os.Process.killProcess(android.os.Process.myPid());
-            System.exit(1);
-        }
     }
 //   这里如果也处理的话 ，那么腾讯的bugly 就无法工作了
 //    /**

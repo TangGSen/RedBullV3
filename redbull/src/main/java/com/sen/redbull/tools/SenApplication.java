@@ -11,6 +11,7 @@ import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.tencent.bugly.crashreport.CrashReport;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.io.File;
@@ -29,12 +30,16 @@ public class SenApplication extends Application {
         senApplication = this;
         initImageLoader(this);//初始化图像缓存加载器
 
-        OkHttpUtils.getInstance().debug("OkHttpUtils").setConnectTimeout(100000, TimeUnit.MILLISECONDS);
+        OkHttpUtils.getInstance().debug("OkHttpUtils").setConnectTimeout(8000, TimeUnit.MILLISECONDS);
         ActiveAndroid.initialize(this);
 
-//        CrashReport.initCrashReport(getApplicationContext(), Constants.APPID, false);
-        CrashHandler crashHandler = CrashHandler.getInstance();
-        crashHandler.init(getApplicationContext());
+        CrashReport.initCrashReport(getApplicationContext(), Constants.APPID, false);
+//
+//        哥们，本来想实现全局捕获异常，遇到异常就直接干掉程序，但是接入了腾讯的bugly ,这个能干掉了，但是异常信息
+        //无法上传到腾讯的服务器，只能去掉这个了，如果能同时能做到闪退超过三次清理应用内存啥的那就更好，这个我以后在实现吧
+
+//        CrashHandler crashHandler = CrashHandler.getInstance();
+//        crashHandler.init(getApplicationContext());
 
     }
 
