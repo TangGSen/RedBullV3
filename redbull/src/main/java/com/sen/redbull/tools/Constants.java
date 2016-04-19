@@ -13,7 +13,7 @@ public class Constants {
 
     // 外网地址
 
-    public static final String PATH = "http://121.42.212.192/";
+
     //ceshi
 //    public static final String PATH = "http://192.168.50.108:8080/";
 //    public static final String PATH = "http://192.168.191.1:8080/";
