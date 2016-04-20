@@ -118,11 +118,12 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
                     questionLists = homeBeam.getQuestionList();
                     totalScore = homeBeam.getPaper().getTotalScore() + "";
                     if (questionLists == null) {
+                        closeTips();
                         Toast.makeText(ActExamTest.this, "获取试卷数据失败，请重试", Toast.LENGTH_SHORT).show();
                         return false;
                     }
                     if (questionLists.size() == 0) {
-                        DialogUtils.closeDialog();
+                        closeTips();
                         Toast.makeText(ActExamTest.this, "获取试卷数据失败，请重试", Toast.LENGTH_SHORT).show();
                         return false;
                     }
@@ -169,13 +170,15 @@ public class ActExamTest extends BaseActivity implements GestureDetector.OnGestu
                     Toast.makeText(ActExamTest.this, "网络未连接,请联网重新交卷", Toast.LENGTH_SHORT).show();
                     break;
             }
-            DialogUtils.closeDialog();
-            DialogUtils.closeUnCancleDialog();
+            closeTips();
             return false;
         }
     });
 
-
+    private void closeTips(){
+        DialogUtils.closeDialog();
+        DialogUtils.closeUnCancleDialog();
+    }
     //显示用户的分数
     private void showDialogUserResult(final float sroce) {
         BaseDialogCumstorTip.getDefault().showOneBtnDilog(new BaseDialogCumstorTip.DialogButtonOnclickLinster() {

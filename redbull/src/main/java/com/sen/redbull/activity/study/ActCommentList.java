@@ -99,6 +99,8 @@ public class ActCommentList extends BaseActivity  {
 
                     if (commonList == null) {
                         Toast.makeText(ActCommentList.this, "当前没评论", Toast.LENGTH_SHORT).show();
+                        DialogUtils.closeDialog();
+                        return  false;
                     }
                     if (commonList.size() == 0) {
                         Toast.makeText(ActCommentList.this, "当前没评论", Toast.LENGTH_SHORT).show();

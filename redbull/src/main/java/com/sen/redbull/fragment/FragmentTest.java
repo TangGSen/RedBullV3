@@ -79,10 +79,12 @@ public class FragmentTest extends BaseFragment  implements SwipeRefreshLayout.On
                     examItemBeanList = homeBean.getExamList();
                     if (examItemBeanList == null) {
                         Toast.makeText(getActivity(), "没有数据", Toast.LENGTH_SHORT).show();
+                        closeTip();
                         return false;
                     }
                     if (examItemBeanList.size() == 0) {
                         Toast.makeText(getActivity(), "没有数据", Toast.LENGTH_SHORT).show();
+                        closeTip();
                         return false;
                     }
                     allExamItemBeanList.clear();
@@ -93,11 +95,15 @@ public class FragmentTest extends BaseFragment  implements SwipeRefreshLayout.On
 
                     break;
             }
-            DialogUtils.closeDialog();
-            swipe_refresh_widget.setRefreshing(false);
+            closeTip();
             return false;
         }
     });
+
+    private void closeTip(){
+        DialogUtils.closeDialog();
+        swipe_refresh_widget.setRefreshing(false);
+    }
 
     private void showExamData(List<ExamItemBean> examItemBeanList) {
 

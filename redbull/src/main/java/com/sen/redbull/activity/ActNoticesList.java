@@ -93,6 +93,8 @@ public class ActNoticesList extends BaseActivity {
 
                     if (noticesList == null) {
                         Toast.makeText(ActNoticesList.this, "当前没数据", Toast.LENGTH_SHORT).show();
+                        DialogUtils.closeDialog();
+                        return  false;
                     }
                     if (noticesList.size() == 0) {
                         Toast.makeText(ActNoticesList.this, "当前没数据", Toast.LENGTH_SHORT).show();

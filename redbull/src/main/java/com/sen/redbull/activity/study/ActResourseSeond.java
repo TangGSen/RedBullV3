@@ -78,6 +78,7 @@ public class ActResourseSeond extends BaseActivity {
                     // 当返回的数据为空的时候，那么就要显示这个
                     if (mLesssListData == null) {
                         ToastUtils.showTextToast(ActResourseSeond.this, "没有数据");
+                        closeTip();
                         return false;
                     }
                     if (mLesssListData.size() == 0) {
@@ -92,12 +93,15 @@ public class ActResourseSeond extends BaseActivity {
                     break;
 
             }
-            DialogUtils.closeDialog();
-            swipe_refresh_widget.setRefreshing(false);
+            closeTip();
             return false;
         }
     });
 
+    private void closeTip(){
+        DialogUtils.closeDialog();
+        swipe_refresh_widget.setRefreshing(false);
+    }
 
     private void showRecyclerviewItemData(List<ResourSecondItemBean> LesssListData) {
         if (adapter == null) {
