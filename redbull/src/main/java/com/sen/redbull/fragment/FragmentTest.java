@@ -257,6 +257,7 @@ public class FragmentTest extends BaseFragment  implements SwipeRefreshLayout.On
                 isReFlesh = true;
                 getExamListData();
                 isReFlesh = false;
+                swipe_refresh_widget.setRefreshing(false);
             }
         }, 1000);
     }

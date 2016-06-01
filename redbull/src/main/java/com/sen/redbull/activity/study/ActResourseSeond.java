@@ -169,7 +169,7 @@ public class ActResourseSeond extends BaseActivity {
                         isLoadReflesh = true;
                         getDataFromNet(AcountManager.getAcountId());
                         isLoadReflesh = false;
-
+                        swipe_refresh_widget.setRefreshing(false);
                     }
                 }, 1000);
             }

@@ -385,10 +385,9 @@ public class FragmentStudy extends BaseFragment implements SwipeRefreshLayout.On
         mHandler.postDelayed(new Runnable() {
             public void run() {
                 isReFlesh = true;
-
                 getStudyData();
-
                 isReFlesh = false;
+                swipe_refresh_widget.setRefreshing(false);
             }
         }, 1000);
     }
