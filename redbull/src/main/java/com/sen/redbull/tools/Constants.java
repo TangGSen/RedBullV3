@@ -12,7 +12,7 @@ public class Constants {
 
 
     // 外网地址
-    public static final String PATH = "http:///";
+    public static final String PATH = "http://----/";
 
 //    1.app 更新
 public static final String APK_PATH = PATH+"www/view/front/20140504/dcAppAndroid.html";
